@@ -211,6 +211,22 @@ private  Window_id  create_GLUT_window(
 
     glutInitDisplayMode( mode );
 
+    /* bert - verify that the desired display mode is supported.
+     * Owing to the unhelpful design of GLUT, a bad option in the
+     * display mode will cause the program to exit with a cryptic
+     * error when glutCreateWindow() is called.
+     */
+    if (!glutGet(GLUT_DISPLAY_MODE_POSSIBLE)) {
+      if (colour_map_mode) {
+
+	mode &= ~GLUT_INDEX;
+	mode |= GLUT_RGB;
+
+	colour_map_mode = 0;
+      }
+      glutInitDisplayMode( mode );
+    }
+
 #ifdef BUG_ON_DISPLAY_ON_LINUX_XTERM
 /*
   --- when running on SGI, displaying on Linux xterm, doing this get causes
