@@ -108,7 +108,10 @@ private  void  reinitialize_window(
     GS_set_matrix_mode( VIEWING_MATRIX );
 
     type = window->shading_type;
-    ++window->shading_type;
+    if ( window->shading_type == FLAT_SHADING )
+	window->shading_type = GOURAUD_SHADING;
+    else
+	window->shading_type = FLAT_SHADING;
     G_set_shading_type( window, type );
 
     window->lighting_state = !window->lighting_state;

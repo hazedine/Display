@@ -11,7 +11,7 @@ public  Colour  make_rgba_Colour(
 
     c = 0;         /* to avoid used-before-set compiler messages */
 
-    byte_ptr = (void *) &c;
+    byte_ptr = (unsigned char *) &c;
 
     byte_ptr[3] = (unsigned char) a;
     byte_ptr[2] = (unsigned char) b;
@@ -26,7 +26,7 @@ public  int  get_Colour_r(
 {
     unsigned  char  *b;
 
-    b = (void *) &colour;
+    b = (unsigned char *) &colour;
 
     return( (int) b[0] );
 }
@@ -36,7 +36,7 @@ public  int  get_Colour_g(
 {
     unsigned  char  *b;
 
-    b = (void *) &colour;
+    b = (unsigned char *) &colour;
 
     return( (int) b[1] );
 }
@@ -46,7 +46,7 @@ public  int  get_Colour_b(
 {
     unsigned  char  *b;
 
-    b = (void *) &colour;
+    b = (unsigned char *) &colour;
 
     return( (int) b[2] );
 }
@@ -56,7 +56,7 @@ public  int  get_Colour_a(
 {
     unsigned  char  *b;
 
-    b = (void *) &colour;
+    b = (unsigned char *) &colour;
 
     return( (int) b[3] );
 }

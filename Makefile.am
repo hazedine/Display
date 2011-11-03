@@ -34,6 +34,12 @@ SUBDIRS = Graphics \
 	Documentation
 
 m4_files = \
+   m4/acx_pthread.m4 \
+   m4/ax_check_gl.m4 \
+   m4/ax_check_glu.m4 \
+   m4/ax_check_glut.m4 \
+   m4/ax_lang_compiler_ms.m4 \
+   m4/lf_link_headers.m4 \
 	m4/mni_REQUIRE_LIB.m4 \
 	m4/mni_REQUIRE_MNILIBS.m4 \
 	m4/mni_REQUIRE_OPENINVENTOR.m4 \
@@ -61,8 +67,11 @@ CLEANFILES = dummy.c Display.menu
 
 Display_LDFLAGS = $(X_LIBS)
 Display_LDADD = $(display_obj) \
-	Graphics/libbicgl.a $(GL_LIBS) $(GLU_LIBS) $(GLUT_LIBS) \
-	$(MNI_LIBS) $(malloc_LIBS)
+	Graphics/libbicgl.a $(GL_LIBS) $(GLU_LIBS) $(GLUT_LIBS)
+if USE_SEAL
+Display_LDADD += -lbicseal
+endif
+Display_LDADD += $(MNI_LIBS) $(malloc_LIBS)
 
 Display_DEPENDENCIES = Display.menu $(display_obj)
 
@@ -82,7 +91,6 @@ display_src = \
            callbacks/call_globals.c \
            callbacks/colour_coding.c \
            callbacks/file.c \
-           callbacks/georges.c \
            callbacks/line_ops.c \
            callbacks/object_ops.c \
            callbacks/marker_ops.c \
@@ -164,6 +172,10 @@ display_src = \
 
 display_obj = $(display_src:.c=.o)
 
+if USE_SEAL
+display_obj += callbacks/seal.o
+endif
+
 
 
 #$(PROTOTYPE_FILE): $(display_src)
@@ -171,5 +183,5 @@ display_obj = $(display_src:.c=.o)
 
 Display.menu: menu/Display.menu.include
 	sed -e 's/\\//g' -e 's/\"//'    \
-		< $(top_srcdir)/menu/Display.menu.include    > $@
+		< $(top_builddir)/menu/Display.menu.include    > $@
 

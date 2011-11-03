@@ -3,8 +3,14 @@
 /* define to disable compiled-in fallback menu */
 #undef DISPLAY_DISABLE_MENU_FALLBACK
 
+/* define to enable sulcal labelling using SEAL */
+#undef DISPLAY_USE_SEAL
+
 /* Use the Apple OpenGL framework. */
 #undef HAVE_APPLE_OPENGL_FRAMEWORK
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H

@@ -1,3 +1,11 @@
+2005-04-02  Steve M. Robbins  <steve@nyongwa.montreal.qc.ca>
+
+	* OpenGL_graphics/colour_def.c: 
+	* OpenGL_graphics/draw.c: Fix cast operations.
+
+	* G_graphics/windows.c (reinitialize_window): Replace preincrement
+	operation on enumerated type (illegal in C++) by if-statement.
+
 2004-06-29  Bert Vincent   <bert@bic.mni.mcgill.ca>
 	* Stub out copy_X_colours() in GLUT_windows/copy_x_colours.c,
 	to avoid linking problems against FreeGlut.

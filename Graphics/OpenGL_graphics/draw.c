@@ -17,11 +17,7 @@ public  void  GS_set_normal(
 public  void  GS_set_colour(
     Colour  colour )
 {
-    void   *void_ptr;
-
-    void_ptr = (void *) &colour;
-
-    glColor4ubv( void_ptr );
+    glColor4ubv( (GLubyte*) &colour );
 }
 
 public  void  GS_set_colour_index(
