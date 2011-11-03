@@ -17,6 +17,7 @@ static char rcsid[] = "$Header: /software/source/visualization/Display/menu/menu
 #endif
 
 
+#include  <config.h>
 #include  <display.h>
 
 static    DEF_EVENT_FUNCTION( handle_character_down );

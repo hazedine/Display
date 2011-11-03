@@ -1,4 +1,4 @@
-# aclocal.m4 generated automatically by aclocal 1.4k
+# aclocal.m4 generated automatically by aclocal 1.4i
 
 # Copyright 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
@@ -64,15 +64,6 @@ AC_DEFINE_UNQUOTED(VERSION, "$VERSION", [Version number of package])])
 # the ones we care about.
 ifdef([m4_pattern_allow],
       [m4_pattern_allow([^AM_[A-Z]+FLAGS])])dnl
-
-# Autoconf 2.50 always computes EXEEXT.  However we need to be
-# compatible with 2.13, for now.  So we always define EXEEXT, but we
-# don't compute it.
-AC_SUBST(EXEEXT)
-# Similar for OBJEXT -- only we only use OBJEXT if the user actually
-# requests that it be used.  This is a bit dumb.
-: ${OBJEXT=o}
-AC_SUBST(OBJEXT)
 
 # Some tools Automake needs.
 AC_REQUIRE([AM_SANITY_CHECK])dnl
@@ -167,7 +158,7 @@ AC_DEFUN([AM_MISSING_INSTALL_SH],
 if test -z "$install_sh"; then
    for install_sh in "$ac_aux_dir/install-sh" \
                      "$ac_aux_dir/install.sh" \
-                     "${am_missing_run}${ac_aux_dir}/install-sh";
+                     "${am_missing_run}${ac_auxdir}/install-sh";
    do
      test -f "$install_sh" && break
    done
@@ -736,26 +727,13 @@ compiler="[$]2"
 # to the aix ld manual.
 AC_DEFUN([_LT_AC_SYS_LIBPATH_AIX],
 [AC_LINK_IFELSE(AC_LANG_PROGRAM,[
-aix_libpath=`dump -H conftest$ac_exeext 2>/dev/null | ${AWK-awk} '/Import File Strings/ { getline; getline; if ($[2] ~ /^\//) print $[2] }'`
+aix_libpath=`dump -H conftest$ac_exeext 2>/dev/null | sed -n -e '/Import File Strings/,/^$/ { /^0/ { s/^0  *\(.*\)$/\1/; p; }
+}'`
 # Check for a 64-bit object if we didn't find anything.
-if test -z "$aix_libpath"; then aix_libpath=`dump -HX64 conftest$ac_exeext 2>/dev/null | ${AWK-awk} '/Import File Strings/ { getline; getline; if ($[2] ~ /^\//) print $[2] }'`; fi],[])
+if test -z "$aix_libpath"; then aix_libpath=`dump -HX64 conftest$ac_exeext 2>/dev/null | sed -n -e '/Import File Strings/,/^$/ { /^0/ { s/^0  *\(.*\)$/\1/; p; }
+}'`; fi],[])
 if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
 ])# _LT_AC_SYS_LIBPATH_AIX
-
-
-# _LT_AC_LIBTOOL_SYS_PATH_SEPARATOR
-# ---------------------------------
-AC_DEFUN([_LT_AC_LIBTOOL_SYS_PATH_SEPARATOR],
-[# Find the correct PATH separator.  Usually this is `:', but
-# DJGPP uses `;' like DOS.
-if test "X${PATH_SEPARATOR+set}" != Xset; then
-  UNAME=${UNAME-`uname 2>/dev/null`}
-  case X$UNAME in
-    *-DOS) PATH_SEPARATOR=';' ;;
-    *)     PATH_SEPARATOR=':' ;;
-  esac
-fi
-])# _LT_AC_LIBTOOL_SYS_PATH_SEPARATOR
 
 
 # _LT_AC_PROG_ECHO_BACKSLASH
@@ -765,7 +743,6 @@ fi
 AC_DEFUN([_LT_AC_PROG_ECHO_BACKSLASH],
 [ifdef([AC_DIVERSION_NOTICE], [AC_DIVERT_PUSH(AC_DIVERSION_NOTICE)],
                               [AC_DIVERT_PUSH(NOTICE)])
-_LT_AC_LIBTOOL_SYS_PATH_SEPARATOR
 
 # Check that we are running under the correct shell.
 SHELL=${CONFIG_SHELL-/bin/sh}
@@ -830,7 +807,7 @@ else
   #
   # So, first we look for a working echo in the user's PATH.
 
-  IFS="${IFS= 	}"; lt_save_ifs="$IFS"; IFS="${IFS}${PATH_SEPARATOR}"
+  IFS="${IFS= 	}"; lt_save_ifs="$IFS"; IFS="${IFS}$ac_path_separator"
   for dir in $PATH /usr/ucb; do
     IFS="$lt_save_ifs"
     if (test -f $dir/echo || test -f $dir/echo$ac_exeext) &&
@@ -1521,7 +1498,7 @@ aix4* | aix5*)
     # depend on `.', always an invalid library.  This was fixed in
     # development snapshots of GCC prior to 3.0.
     case $host_os in
-      [ aix4 | aix4.[01] | aix4.[01].*)]
+      aix4 | aix4.[[01]] | aix4.[[01]].*)
       if { echo '#if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 97)'
            echo ' yes '
            echo '#endif'; } | ${CC} -E - | grep yes > /dev/null; then
@@ -1546,7 +1523,6 @@ aix4* | aix5*)
       soname_spec='${libname}${release}.so$major'
     fi
     shlibpath_var=LIBPATH
-    deplibs_check_method=pass_all
   fi
   ;;
 
@@ -1595,7 +1571,7 @@ cygwin* | mingw* | pw32*)
     ;;
   yes,mingw*)
     library_names_spec='${libname}`echo ${release} | [sed -e 's/[.]/-/g']`${versuffix}.dll'
-    sys_lib_search_path_spec=`$CC -print-search-dirs | grep "^libraries:" | sed -e "s/^libraries://" -e "s/$PATH_SEPARATOR/ /g"`
+    sys_lib_search_path_spec=`$CC -print-search-dirs | grep "^libraries:" | sed -e "s/^libraries://" -e "s/$ac_path_separator/ /g"`
     ;;
   yes,pw32*)
     library_names_spec='`echo ${libname} | sed -e 's/^lib/pw/'``echo ${release} | sed -e 's/[.]/-/g'`${versuffix}.dll'
@@ -1797,15 +1773,15 @@ nto-qnx)
 
 openbsd*)
   version_type=sunos
+  need_lib_prefix=no
+  need_version=no
   library_names_spec='${libname}${release}.so$versuffix ${libname}.so$versuffix'
   finish_cmds='PATH="\$PATH:/sbin" ldconfig -m $libdir'
   shlibpath_var=LD_LIBRARY_PATH
-  file_magic_cmd=/usr/bin/file
-  file_magic_test_file=`echo /usr/lib/libc.so.*`
-  if [ "`echo __ELF__ | $CC -E - | grep __ELF__`" = "" -o "$host_os-$host_cpu" = "openbsd2.8-powerpc" ]; then
-    deplibs_check_method='file_magic ELF [0-9][0-9]*-bit [LM]SB shared object'
+  if test "`echo __ELF__ | $CC -E - | grep __ELF__`" = "" || test"$host_os-$host_cpu" = "openbsd2.8-powerpc"; then
+    shlibpath_overrides_runpath=no
   else
-    deplibs_check_method='file_magic OpenBSD.* shared library'
+    shlibpath_overrides_runpath=yes
   fi
   ;;
 
@@ -1819,6 +1795,7 @@ os2*)
 
 osf3* | osf4* | osf5*)
   version_type=osf
+  need_lib_prefix=no
   need_version=no
   soname_spec='${libname}${release}.so'
   library_names_spec='${libname}${release}.so$versuffix ${libname}${release}.so $libname.so'
@@ -1905,8 +1882,7 @@ test "$dynamic_linker" = no && can_build_shared=no
 # _LT_AC_TAGCONFIG
 # ----------------
 AC_DEFUN([_LT_AC_TAGCONFIG],
-[AC_REQUIRE([_LT_AC_LIBTOOL_SYS_PATH_SEPARATOR])dnl
-AC_ARG_WITH([tags], 
+[AC_ARG_WITH([tags], 
     [AC_HELP_STRING([--with-tags=TAGS],
         [include additional configurations @<:@CXX,GCJ@:>@])],
     [tagnames="$withval"],
@@ -1930,7 +1906,7 @@ if test -f "$ltmain" && test -n "$tagnames"; then
   # Note that this assumes the entire list is on one line.
   available_tags=`grep "^available_tags=" "${ofile}" | sed -e 's/available_tags=\(.*$\)/\1/' -e 's/\"//g'`
 
-  IFS="${IFS= 	}"; lt_save_ifs="$IFS"; IFS="${IFS}${PATH_SEPARATOR-:},"
+  IFS="${IFS= 	}"; lt_save_ifs="$IFS"; IFS="${IFS}$ac_path_separator,"
   for tagname in $tagnames; do
     IFS="$lt_save_ifs"
     # Check whether tagname contains only valid characters
@@ -2002,8 +1978,7 @@ AC_DEFUN([AC_LIBTOOL_WIN32_DLL],
 # implement the --enable-shared flag
 # DEFAULT is either `yes' or `no'.  If omitted, it defaults to `yes'.
 AC_DEFUN([AC_ENABLE_SHARED],
-[AC_REQUIRE([_LT_AC_LIBTOOL_SYS_PATH_SEPARATOR])dnl
-define([AC_ENABLE_SHARED_DEFAULT], ifelse($1, no, no, yes))dnl
+[define([AC_ENABLE_SHARED_DEFAULT], ifelse($1, no, no, yes))dnl
 AC_ARG_ENABLE([shared],
     [AC_HELP_STRING([--enable-shared@<:@=PKGS@:>@],
         [build shared libraries @<:@default=]AC_ENABLE_SHARED_DEFAULT[@:>@])],
@@ -2014,7 +1989,7 @@ AC_ARG_ENABLE([shared],
     *)
       enable_shared=no
       # Look at the argument we got.  We use all the common list separators.
-      IFS="${IFS= 	}"; lt_save_ifs="$IFS"; IFS="${IFS}${PATH_SEPARATOR-:},"
+      IFS="${IFS= 	}"; lt_save_ifs="$IFS"; IFS="${IFS}$ac_path_separator,"
       for pkg in $enableval; do
         IFS="$lt_save_ifs"
         if test "X$pkg" = "X$p"; then
@@ -2042,8 +2017,7 @@ AC_ENABLE_SHARED(no)
 # implement the --enable-static flag
 # DEFAULT is either `yes' or `no'.  If omitted, it defaults to `yes'.
 AC_DEFUN([AC_ENABLE_STATIC],
-[AC_REQUIRE([_LT_AC_LIBTOOL_SYS_PATH_SEPARATOR])dnl
-define([AC_ENABLE_STATIC_DEFAULT], ifelse($1, no, no, yes))dnl
+[define([AC_ENABLE_STATIC_DEFAULT], ifelse($1, no, no, yes))dnl
 AC_ARG_ENABLE([static],
     [AC_HELP_STRING([--enable-static@<:@=PKGS@:>@],
         [build static libraries @<:@default=]AC_ENABLE_STATIC_DEFAULT[@:>@])],
@@ -2054,7 +2028,7 @@ AC_ARG_ENABLE([static],
     *)
      enable_static=no
       # Look at the argument we got.  We use all the common list separators.
-      IFS="${IFS= 	}"; lt_save_ifs="$IFS"; IFS="${IFS}${PATH_SEPARATOR-:},"
+      IFS="${IFS= 	}"; lt_save_ifs="$IFS"; IFS="${IFS}$ac_path_separator,"
       for pkg in $enableval; do
         IFS="$lt_save_ifs"
         if test "X$pkg" = "X$p"; then
@@ -2082,8 +2056,7 @@ AC_ENABLE_STATIC(no)
 # implement the --enable-fast-install flag
 # DEFAULT is either `yes' or `no'.  If omitted, it defaults to `yes'.
 AC_DEFUN([AC_ENABLE_FAST_INSTALL],
-[AC_REQUIRE([_LT_AC_LIBTOOL_SYS_PATH_SEPARATOR])dnl
-define([AC_ENABLE_FAST_INSTALL_DEFAULT], ifelse($1, no, no, yes))dnl
+[define([AC_ENABLE_FAST_INSTALL_DEFAULT], ifelse($1, no, no, yes))dnl
 AC_ARG_ENABLE([fast-install],
     [AC_HELP_STRING([--enable-fast-install@<:@=PKGS@:>@],
     [optimize for fast installation @<:@default=]AC_ENABLE_FAST_INSTALL_DEFAULT[@:>@])],
@@ -2094,7 +2067,7 @@ AC_ARG_ENABLE([fast-install],
     *)
       enable_fast_install=no
       # Look at the argument we got.  We use all the common list separators.
-      IFS="${IFS= 	}"; lt_save_ifs="$IFS"; IFS="${IFS}${PATH_SEPARATOR-:},"
+      IFS="${IFS= 	}"; lt_save_ifs="$IFS"; IFS="${IFS}$ac_path_separator,"
       for pkg in $enableval; do
         IFS="$lt_save_ifs"
         if test "X$pkg" = "X$p"; then
@@ -2131,16 +2104,15 @@ pic_mode=ifelse($#,1,$1,default)
 # -------------------
 # find a file program which can recognise shared library
 AC_DEFUN([AC_PATH_TOOL_PREFIX],
-[AC_REQUIRE([_LT_AC_LIBTOOL_SYS_PATH_SEPARATOR])dnl
-AC_MSG_CHECKING([for $1])
+[AC_MSG_CHECKING([for $1])
 AC_CACHE_VAL(lt_cv_path_MAGIC_CMD,
 [case $MAGIC_CMD in
-[\\/*] |  ?:[\\/]*)
+[[\\/*] |  ?:[\\/]*])
   lt_cv_path_MAGIC_CMD="$MAGIC_CMD" # Let the user override the test with a path.
   ;;
 *)
   lt_save_MAGIC_CMD="$MAGIC_CMD"
-  IFS="${IFS=   }"; lt_save_ifs="$IFS"; IFS="${PATH_SEPARATOR-:}"
+  IFS="${IFS=   }"; lt_save_ifs="$IFS"; IFS="$ac_path_separator"
 dnl $ac_dummy forces splitting on constant user-supplied paths.
 dnl POSIX.2 word splitting is done only on the output of word expansions,
 dnl not every word.  This closes a longstanding sh security hole.
@@ -2194,11 +2166,10 @@ fi
 # -------------
 # find a file program which can recognise a shared library
 AC_DEFUN([AC_PATH_MAGIC],
-[AC_REQUIRE([_LT_AC_LIBTOOL_SYS_PATH_SEPARATOR])dnl
-AC_PATH_TOOL_PREFIX(${ac_tool_prefix}file, /usr/bin${PATH_SEPARATOR-:}$PATH)
+[AC_PATH_TOOL_PREFIX(${ac_tool_prefix}file, /usr/bin$ac_path_separator$PATH)
 if test -z "$lt_cv_path_MAGIC_CMD"; then
   if test -n "$ac_tool_prefix"; then
-    AC_PATH_TOOL_PREFIX(file, /usr/bin${PATH_SEPARATOR-:}$PATH)
+    AC_PATH_TOOL_PREFIX(file, /usr/bin$ac_path_separator$PATH)
   else
     MAGIC_CMD=:
   fi
@@ -2218,7 +2189,6 @@ AC_DEFUN([AC_PROG_LD],
 AC_REQUIRE([AC_PROG_CC])dnl
 AC_REQUIRE([AC_CANONICAL_HOST])dnl
 AC_REQUIRE([AC_CANONICAL_BUILD])dnl
-AC_REQUIRE([_LT_AC_LIBTOOL_SYS_PATH_SEPARATOR])dnl
 ac_prog=ld
 if test "$GCC" = yes; then
   # Check if gcc -print-prog-name=ld gives a path.
@@ -2257,7 +2227,7 @@ else
 fi
 AC_CACHE_VAL(lt_cv_path_LD,
 [if test -z "$LD"; then
-  IFS="${IFS= 	}"; lt_save_ifs="$IFS"; IFS="${IFS}${PATH_SEPARATOR-:}"
+  IFS="${IFS= 	}"; lt_save_ifs="$IFS"; IFS="${IFS}$ac_path_separator"
   for ac_dir in $PATH; do
     IFS="$lt_save_ifs"
     test -z "$ac_dir" && ac_dir=.
@@ -2364,7 +2334,7 @@ darwin* | rhapsody*)
   lt_cv_deplibs_check_method='file_magic Mach-O dynamically linked shared library'
   lt_cv_file_magic_cmd='/usr/bin/file -L'
   case "$host_os" in
-  rhapsody* | darwin1.[012])
+  rhapsody* | darwin1.[[012]])
     lt_cv_file_magic_test_file=`/System/Library/Frameworks/System.framework/System`
     ;;
   *) # Darwin 1.3 on
@@ -2454,6 +2424,16 @@ newos6*)
 nto-qnx)
   lt_cv_deplibs_check_method=unknown
   ;;
+
+openbsd*)
+  lt_cv_file_magic_cmd=/usr/bin/file
+  lt_cv_file_magic_test_file=`echo /usr/lib/libc.so.*`
+  if test "`echo __ELF__ | $CC -E - | grep __ELF__`" = "" -o "$host_os-$host_cpu" = "openbsd2.8-powerpc"; then
+    [lt_cv_deplibs_check_method='file_magic ELF [0-9][0-9]*-bit [LM]SB shared object']
+  else
+    lt_cv_deplibs_check_method='file_magic OpenBSD.* shared library'
+  fi
+  ;;
      
 osf3* | osf4* | osf5*)
   # this will be overridden with pass_all, but let us keep it just in case
@@ -2508,12 +2488,11 @@ test -z "$deplibs_check_method" && deplibs_check_method=unknown
 # find the path to a BSD-compatible name lister
 AC_DEFUN([AC_PROG_NM],
 [AC_CACHE_CHECK([for BSD-compatible nm], lt_cv_path_NM,
-[AC_REQUIRE([_LT_AC_LIBTOOL_SYS_PATH_SEPARATOR])dnl
-if test -n "$NM"; then
+[if test -n "$NM"; then
   # Let the user override the test.
   lt_cv_path_NM="$NM"
 else
-  IFS="${IFS= 	}"; lt_save_ifs="$IFS"; IFS="${IFS}${PATH_SEPARATOR-:}"
+  IFS="${IFS= 	}"; lt_save_ifs="$IFS"; IFS="${IFS}$ac_path_separator"
   for ac_dir in $PATH /usr/ccs/bin /usr/ucb /bin; do
     IFS="$lt_save_ifs"
     test -z "$ac_dir" && ac_dir=.
@@ -3332,6 +3311,7 @@ case $host_os in
     _LT_AC_TAGVAR(ld_shlibs, $1)=no
     ;;
   sco*)
+    _LT_AC_TAGVAR(archive_cmds_need_lc, $1)=no
     case $cc_basename in
       CC)
         # FIXME: insert proper C++ library support
@@ -3439,7 +3419,7 @@ case $host_os in
     esac
     ;;
   sysv5OpenUNIX8* | sysv5UnixWare7* | sysv5uw[[78]]* | unixware7*)
-    _LT_AC_TAGVAR(archive_cmds_need_lc, $2)=no
+    _LT_AC_TAGVAR(archive_cmds_need_lc, $1)=no
     ;;
   tandem*)
     case $cc_basename in
@@ -4902,7 +4882,7 @@ EOF
       # FIXME: Relying on posixy $() will cause problems for
       #        cross-compilation, but unfortunately the echo tests do not
       #        yet detect zsh echo's removal of \ escapes.
-      _LT_AC_TAGVAR(archive_cmds, $1)='$CC $(test .$module = .yes && echo -bundle || echo -dynamiclib) $allow_undefined_flag -o $lib $libobjs $deplibs$linkopts -install_name $rpath/$soname $(test -n "$verstring" -a x$verstring != x0.0 && echo $verstring)'
+      _LT_AC_TAGVAR(archive_cmds, $1)='$CC $(test .$module = .yes && echo -bundle || echo -dynamiclib) $allow_undefined_flag -o $lib $libobjs $deplibs$linker_flags -install_name $rpath/$soname $(test -n "$verstring" -a x$verstring != x0.0 && echo $verstring)'
       # We need to add '_' to the symbols in $export_symbols first
       #_LT_AC_TAGVAR(archive_expsym_cmds, $1)="$_LT_AC_TAGVAR(archive_cmds, $1)"' && strip -s $export_symbols'
       _LT_AC_TAGVAR(hardcode_direct, $1)=yes
@@ -5236,7 +5216,7 @@ EOF
       ;;
   
     newsos6)
-      _LT_AC_TAGVAR(archive_cmds, $1)='$LD -G -h $soname -o $lib $libobjs $deplibs $linkopts'
+      _LT_AC_TAGVAR(archive_cmds, $1)='$LD -G -h $soname -o $lib $libobjs $deplibs $linker_flags'
       _LT_AC_TAGVAR(hardcode_direct, $1)=yes
       _LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}-rpath ${wl}$libdir'
       _LT_AC_TAGVAR(hardcode_libdir_separator, $1)=:
@@ -5248,14 +5228,14 @@ EOF
       _LT_AC_TAGVAR(hardcode_shlibpath_var, $1)=no
     
       case "$host_os" in
-        openbsd[01].* | openbsd2.[0-7] | openbsd2.[0-7].*)
+        openbsd[[01]].* | openbsd2.[[0-7]] | openbsd2.[[0-7]].*)
           _LT_AC_TAGVAR(archive_cmds, $1)='$LD -Bshareable -o $lib $libobjs $deplibs $linker_flags'
           _LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='-R$libdir'
         ;;
         *)
           _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $pic_flag -o $lib $libobjs $deplibs $linker_flags'
           _LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}-rpath,$libdir'
-          if [ "`echo __ELF__ | $CC -E - | grep __ELF__`" = "" -o "$host_os-$host_cpu" = "openbsd2.8-powerpc" ]; then
+          if test "`echo __ELF__ | $CC -E - | grep __ELF__`" = "" || test "$host_os-$host_cpu" = "openbsd2.8-powerpc"; then
            _LT_AC_TAGVAR(export_dynamic_flag_spec, $1)='${wl}-E'
           fi
         ;;
@@ -5344,7 +5324,7 @@ EOF
   
     sysv4)
       if test "x$host_vendor" = xsni; then
-        _LT_AC_TAGVAR(archive_cmds, $1)='$LD -G -Bsymbolic -h $soname -o $lib $libobjs $deplibs $linkopts'
+        _LT_AC_TAGVAR(archive_cmds, $1)='$LD -G -Bsymbolic -h $soname -o $lib $libobjs $deplibs $linker_flags'
         _LT_AC_TAGVAR(hardcode_direct, $1)=yes # is this really true???
       else
         _LT_AC_TAGVAR(archive_cmds, $1)='$LD -G -h $soname -o $lib $libobjs $deplibs $linker_flags'
