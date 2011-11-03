@@ -1,6 +1,8 @@
 See INSTALL for generic installation instructions.
 
+
 		Required Libraries
+		------------------
 
 Display requires several libraries to be installed before it
 can successfully be configured and built.  Please install all
@@ -18,6 +20,7 @@ of the following before continuing.
 
 
 		Configuring Display
+		-------------------
 
 Often, you can configure and build Display simply:
 
@@ -51,9 +54,19 @@ For example, if you need to look in /usr/local/lib as well as
 
 will do the trick.
 
-If you have a more complicated setup, and, e.g. need to choose among multiple
-installed versions of some library (it happens!), use the "--with-foo-library"
-and "--with-foo-includes" options.  See the output of "./configure --help".
+
+
+		Build Failure with menu/menu.c
+		------------------------------
+
+In July 2001, the compiler shipped with Apple Mac OSX systems failed
+to compile this file.  To work around this, you should re-run the
+configure script, adding "--disable-menu-fallback" to the configure
+options chosen.  After building, you need to copy the file
+"Display.menu" to /usr/local/lib, or $(prefix)/lib, where $(prefix)
+means the value set using "configure --prefix=...".
+
+
 
 Good luck.
 

@@ -14,7 +14,7 @@
 ---------------------------------------------------------------------------- */
 
 #ifndef lint
-static char rcsid[] = "$Header: /software/source/visualization/Display/atlas/atlas.c,v 1.26 2000/10/07 08:51:16 stever Exp $";
+static char rcsid[] = "$Header: /software/source/visualization/Display/atlas/atlas.c,v 1.27 2001/05/27 00:19:37 stever Exp $";
 #endif
 
 #include  <display.h>

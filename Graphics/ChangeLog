@@ -1,4 +1,10 @@
-2000-11-12  Steve Robbins  <steve@nyongwa.montreal.qc.ca>
+2001-07-20  Steve ROBBINS  <stever@bic.mni.mcgill.ca>
+
+	* GLUT_windows/Makefile.am (INCLUDES): Include $(X_CFLAGS).
+
+2001-05-22  Steve M. Robbins  <steve@nyongwa.montreal.qc.ca>
+
+	* branch-1_3 merge: Many autoconfig files added.
 
 	* various: Changed include from "foo.h" to "volume_io/foo.h",
 	to "bicpl/foo.h", or to "GL/foo.h" to match current practice.
@@ -8,6 +14,34 @@
 	extraneous targets; will only build "opengl" library now.
 
 	* Makefile.include: removed.
+
+2001-05-22  Steve M. Robbins  <steve@nyongwa.montreal.qc.ca>
+
+	* GLUT_windows/Makefile:
+	* G_graphics/Makefile:
+	* OpenGL_graphics/Makefile:
+	* Testing/test_graphics.mesa: Restored from ~david/Source/Graphics.
+
+	* GLUT_windows/print_X_colours.c:
+	* G_graphics/events.c:
+	* Include/graphics_info.h:
+	* Include/window_events.h:
+	* IrisGL_graphics/events.c:
+	* OpenGL_graphics/events.c:
+	* Testing/test_globals.c: Removed.
+
+	* tagged as david-source-2001-05-22.  This set of sources is
+	identical to the current contents of
+	~david/Source/Register/Graphics (with this ChangeLog added).
+
+2000-10-07  Steve ROBBINS  <stever@bottom.bic.mni.mcgill.ca>
+
+	* GLUT_windows/Include/glut_window_prototypes.h:
+	* Include/graphics_prototypes.h:
+	* IrisGL_graphics/Include/irisgl_graphics_prototypes.h:
+	* OpenGL_graphics/Include/opengl_graphics_prototypes.h:
+	revert to revision 1.1, the newer version, as 1.2 was the version 
+	copied from the source tarball.
 
 2000-10-07  Steve Robbins  <steve@nyongwa.montreal.qc.ca>
 

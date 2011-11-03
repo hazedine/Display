@@ -13,11 +13,22 @@
 ---------------------------------------------------------------------------- */
 
 #ifndef lint
-static char rcsid[] = "$Header: /software/source/visualization/Display/intersect/ray_polygons.c,v 1.16 1996/04/02 18:15:35 david Exp $";
+static char rcsid[] = "$Header: /software/source/visualization/Display/intersect/ray_polygons.c,v 1.20 2001/08/11 23:49:32 stever Exp $";
 #endif
 
 
 #include  <display.h>
+
+
+/* FIXME: The handling of desired_object_type seems fragile.  Can you reliably
+ * cast an integer to an enum and back ?
+ *
+ * In pick_point_under_mouse(), one wants to specify "intersect with any object 
+ * type".  An out-of-band value of -1 is used, coerced into a variable
+ * of type Object_types.  Smart compilers know that the enum type "Object_types"
+ * are all non-negative, so the code "if (desired_object_type < 0)" was
+ * changed to cast it into an int.
+ */
 
 private  void  recursive_intersect_ray_with_objects_hierarchy(
     object_struct     *current_object,
@@ -48,7 +59,7 @@ private  void  recursive_intersect_ray_with_objects_hierarchy(
                       closest_object_index, closest_dist, found );
         }
     }
-    else if( desired_object_type < 0 ||
+    else if( ((int) desired_object_type) < 0 ||
              desired_object_type == get_object_type(current_object) )
     {
         if( intersect_ray_with_object( ray_origin, ray_direction,

@@ -46,13 +46,13 @@ Display_SOURCES = dummy.c
 dummy.c:
 	touch $@
 
-CLEANFILES = dummy.c
+CLEANFILES = dummy.c Display.menu
 
-
-Display_LDADD = $(display_obj) Graphics/libbicgl.a \
-	-lglut -lGL -lGLU \
-	$(X_LIBS) $(X_PRE_LIBS) -lX11 -lXmu $(X_EXTRA_LIBS) \
-	$(MNI_LIBS) $(malloc_LIBS) -lm
+Display_LDFLAGS = $(X_LIBS)
+Display_LDADD = $(display_obj) \
+	Graphics/libbicgl.a $(GL_LIBS) \
+	$(X_PRE_LIBS) -lX11 -lXmu $(X_EXTRA_LIBS) \
+	$(MNI_LIBS) $(malloc_LIBS)
 
 Display_DEPENDENCIES = Display.menu $(display_obj)
 

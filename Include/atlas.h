@@ -16,7 +16,7 @@
 ---------------------------------------------------------------------------- */
 
 #ifndef lint
-static char atlas_rcsid[] = "$Header: /software/source/visualization/Display/Include/atlas.h,v 1.8 1996/07/04 13:55:56 david Exp $";
+static char atlas_rcsid[] = "$Header: /software/source/visualization/Display/Include/atlas.h,v 1.10 2001/05/27 00:19:36 stever Exp $";
 #endif
 
 #include   <volume_io.h>

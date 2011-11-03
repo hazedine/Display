@@ -13,7 +13,7 @@
 ---------------------------------------------------------------------------- */
 
 #ifndef lint
-static char rcsid[] = "$Header: /software/source/visualization/Display/events/spaceball.c,v 1.3 1996/04/19 13:25:08 david Exp $";
+static char rcsid[] = "$Header: /software/source/visualization/Display/events/spaceball.c,v 1.5 2001/05/27 00:19:44 stever Exp $";
 #endif
 
 
