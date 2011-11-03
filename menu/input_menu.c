@@ -230,6 +230,7 @@ MENU_F(toggle_cursor_follows_paintbrush) \
 MENU_F(toggle_cursor_visibility) \
 MENU_F(set_paint_xy_brush_radius) \
 MENU_F(set_paint_z_brush_radius) \
+MENU_F(toggle_freestyle_painting) \
 MENU_F(copy_labels_from_lower_slice) \
 MENU_F(copy_labels_from_higher_slice) \
 MENU_F(set_current_paint_label) \

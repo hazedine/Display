@@ -802,3 +802,48 @@ public  DEF_MENU_UPDATE(toggle_cursor_follows_paintbrush )
     return( state );
 }
 
+
+/*
+ * The following two functions are added in order to
+ * implement the freestyle/straightline mode option.
+ * Rene Mandl june, 17 1998
+ */
+
+/* ARGSUSED */
+
+public  DEF_MENU_FUNCTION( toggle_freestyle_painting )
+{
+ /*
+  * The only thing to do is to toggle the corresponding
+  * global variable.
+  */
+
+ Toggle_freestyle_painting = !Toggle_freestyle_painting;
+ First_straightline_right_mouse_down = TRUE;
+
+ return( OK );
+}
+
+/* ARGSUSED */
+
+public  DEF_MENU_UPDATE(toggle_freestyle_painting )
+{
+ /*
+  * This funtion determines whether or not the corresponding
+  * menu item should be enabled/disabled.
+  * This decision is based on the presence of a data volume.
+  * If a volume is present the button is enabled.
+  */
+
+ BOOLEAN          state;
+ display_struct   *slice_window;
+
+ state = get_slice_window( display, &slice_window ) &&
+   get_n_volumes(slice_window) > 0;
+
+ if( state ) {
+   set_menu_text_on_off( menu_window, menu_entry,Toggle_freestyle_painting  );
+ }
+ return( state );
+}
+

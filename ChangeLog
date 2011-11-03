@@ -1,3 +1,7 @@
+2006-08-03  Claude Lepage <claude@bic.mni.mcgill.ca>
+        * Added a mode for line drawing during painting
+          (a contribution from Rene Mandl, U. of Copenhagen)
+
 2005-04-03  Andrew L Janke  <a.janke@gmail.com>
 
 	* Added GL/GLU/GLUT m4 macros to EXTRA_DIST
