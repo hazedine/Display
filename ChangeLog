@@ -1,0 +1,72 @@
+2001-01-28  Steve Robbins  <steve@nyongwa.montreal.qc.ca>
+
+	* configure.in: Filter $MNI_LIBS to replace -lfoo by the path to
+	"libfoo.la", if it exists.  Set up for libtool using AM_PROG_LIBTOOL.
+	This allows libtool to link correctly against "libbicpl".
+
+2001-01-26  Steve ROBBINS  <stever@bic.mni.mcgill.ca>
+
+	* callbacks/Makefile.am (INCLUDES): Include $(malloc_CFLAGS).
+
+	* callbacks/call_globals.c (DEF_MENU_FUNCTION): Make code
+	conditional on HAVE_MALLINFO symbol, rather than !linux && !__sun.
+
+	* configure.in: Checkfor mallinfo() in -lmalloc; define
+	HAVE_MALLINFO, if found.
+
+	* Makefile.am (Display.menu): Use $(top_srcdir) to find
+	input file.
+	(Display_LDADD): Link with Xmu, and $(malloc_LIBS).
+
+2000-12-15  Steve Robbins  <steve@nyongwa.montreal.qc.ca>
+
+	* Makefile.am (Display_DEPENDENCIES): Depend on all object files.
+
+2000-12-01  Steve Robbins  <steven.robbins@videotron.ca>
+
+	* README.CVS: Remove erroneous instructions.
+
+	* acinclude.m4: New.  Concatenation of the two m4 files
+	distributed from "smr_macros-0.2.4"
+	[from www.cs.mcgill.ca/~stever/software].
+
+2000-10-07  Steve Robbins  <steve@nyongwa.montreal.qc.ca>
+
+	* Display/Documentation/Display.ps.gz: removed.  Can be generated from
+	the tex source.
+
+	* sources taken from David's Source/Display directory.
+	Unfortunately, some of these files have been damaged,
+	and were filled with zeros rather than data.
+
+	* markers/markers.c:
+	* markers/segment.c:
+	* menu/Display.menu.include:
+	* menu/build_menu.c:
+	* menu/cursor_pos.c:
+	* menu/input_menu.c:
+	* menu/menu.c:
+	* menu/selected.c:
+	* menu/text.c:
+	* segmenting/cut_neighbours.c:
+	* segmenting/painting.c:
+	* segmenting/painting_new.c:
+	* segmenting/segment_polygons.c:
+	* segmenting/segmenting.c:
+	* main/main.c:
+	* main/three_d.c:
+	* main/transforms.c:
+	* main/event_loop.c:
+	* slice_window/colour_coding.c:
+	* slice_window/crop.c:
+	* slice_window/draw_slice.c:
+	* slice_window/histogram.c:
+	* slice_window/pick_angle.c:
+	* slice_window/quadmesh.c:
+	* slice_window/slice.c:
+	* slice_window/slice_3d.c:
+	* slice_window/slice_events.c:
+	* slice_window/undo.c:
+	* slice_window/view.c: damaged files (missing from initial
+	CVS checkin) restored from `Display+register_src_v1.3.tar.gz'.
+

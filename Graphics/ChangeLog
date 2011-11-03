@@ -1,0 +1,27 @@
+2000-11-12  Steve Robbins  <steve@nyongwa.montreal.qc.ca>
+
+	* various: Changed include from "foo.h" to "volume_io/foo.h",
+	to "bicpl/foo.h", or to "GL/foo.h" to match current practice.
+
+	* Makefile: Include one other file, namely ../Makefile.include
+	which is provided by either Register or Display.  Removed many
+	extraneous targets; will only build "opengl" library now.
+
+	* Makefile.include: removed.
+
+2000-10-07  Steve Robbins  <steve@nyongwa.montreal.qc.ca>
+
+	* tagged as release-1_3: sources copied from ~david/Source/Graphics, 
+	with several files rolled back to a revision that matches that found 
+	in the `Display+register_src_v1.3' tarball.  In addition, the 
+	following files from the tarball matched *no* revision.
+
+	* GLUT_windows/glut_windows.c:
+	* GLUT_windows/Include/glut_window_prototypes.h:
+	* Include/graphics_prototypes.h:
+	* IrisGL_graphics/Include/irisgl_graphics_prototypes.h:
+	* OpenGL_graphics/Include/opengl_graphics_prototypes.h:
+	copied from the `Display+register_src_v1.3' tarball, as
+	no CVS revision matched them.
+
+	
