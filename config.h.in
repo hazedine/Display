@@ -3,20 +3,11 @@
 /* define to disable compiled-in fallback menu */
 #undef DISPLAY_DISABLE_MENU_FALLBACK
 
-/* Define to 1 if you have the <dlfcn.h> header file. */
-#undef HAVE_DLFCN_H
+/* Use the Apple OpenGL framework. */
+#undef HAVE_APPLE_OPENGL_FRAMEWORK
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
-
-/* Define to 1 if you have the `GL' library (-lGL). */
-#undef HAVE_LIBGL
-
-/* Define to 1 if you have the `GLU' library (-lGLU). */
-#undef HAVE_LIBGLU
-
-/* Define to 1 if you have the `glut' library (-lglut). */
-#undef HAVE_LIBGLUT
 
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
@@ -32,6 +23,9 @@
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
+
+/* Define if you have POSIX threads libraries and header files. */
+#undef HAVE_PTHREAD
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
@@ -54,6 +48,9 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
+/* Define to 1 if you have the <windows.h> header file. */
+#undef HAVE_WINDOWS_H
+
 /* Define if should build with MINC 2.0 */
 #undef MINC2
 
@@ -74,6 +71,10 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
+
+/* Define to necessary symbol if this constant uses a non-standard name on
+   your system. */
+#undef PTHREAD_CREATE_JOINABLE
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS

@@ -2,7 +2,12 @@
 #define  DEF_GLUT_WINDOWS
 
 #include  <graphics_base.h>
+
+#ifdef HAVE_APPLE_OPENGL_FRAMEWORK
+#include <GLUT/glut.h>
+#else
 #include  <GL/glut.h>
+#endif
 
 typedef  int  Window_id;
 

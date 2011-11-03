@@ -262,7 +262,8 @@ private  Window_id  create_GLUT_window(
     doub = glutGet((GLenum) GLUT_WINDOW_DOUBLEBUFFER);
     depth = glutGet((GLenum) GLUT_WINDOW_DEPTH_SIZE);
 
-    glutUseLayer( (GLenum) GLUT_NORMAL );
+    /* why? I don't understand... */
+    /* glutUseLayer( GLUT_NORMAL ); */
 
     glutPopWindow();
 

@@ -57,7 +57,20 @@ AC_DEFUN([mni_REQUIRE_OOBICPL],
 [
     AC_REQUIRE([mni_REQUIRE_BICPL])
 
+    # the regular expression C library
+    smr_REQUIRED_LIB(pcre, pcre_compile, pcre.h)
+    
     AC_LANG_PUSH(C++)
+
+
+    # the C++ wrapper for the pcre library
+    AC_MSG_CHECKING([for -lpcre++])
+    LIBS="-lpcre++ $LIBS"
+    AC_TRY_LINK([#include <pcre++.h>],
+                [using namespace pcrepp; Pcre EE("[a-z]", "i");],,
+                [AC_MSG_ERROR(cannot find pcre++ library)])
+    AC_MSG_RESULT([yes])
+
     mni_REQUIRE_LIB(oobicpl,[#include <mniVolume.h>],[mniVolume vol;])
     AC_LANG_POP
 ])
