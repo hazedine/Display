@@ -56,7 +56,7 @@ modename="$progname"
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.5.0a
-TIMESTAMP=" (1.1220.2.35 2003/11/12 18:51:58) Debian$Rev: 148 $"
+TIMESTAMP=" (1.1220.2.35 2003/11/12 18:51:58) Debian$Rev: 159 $"
 
 default_mode=
 help="Try \`$progname --help' for more information."
@@ -1837,6 +1837,7 @@ EOF
 	  else
 	    deplibs="$deplib $deplibs"
 	  fi
+	  continue
 	  ;;
 	-l*)
 	  if test "$linkmode" != lib && test "$linkmode" != prog; then

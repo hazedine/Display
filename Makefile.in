@@ -173,6 +173,12 @@ SUBDIRS = Graphics \
 	Documentation
 
 
+m4_files = \
+	m4/smr_OPTIONAL_LIB.m4 \
+	m4/smr_REQUIRED_LIB.m4 \
+	m4/smr_WITH_BUILD_PATH.m4
+
+
 PROTOTYPE_FILE = Include/display_prototypes.h
 
 bin_PROGRAMS = Display
@@ -188,7 +194,6 @@ CLEANFILES = dummy.c Display.menu
 Display_LDFLAGS = $(X_LIBS)
 Display_LDADD = $(display_obj) \
 	Graphics/libbicgl.a $(GL_LIBS) \
-	$(X_PRE_LIBS) -lX11 -lXmu $(X_EXTRA_LIBS) \
 	$(MNI_LIBS) $(malloc_LIBS)
 
 
@@ -290,8 +295,6 @@ display_src = \
 
 
 display_obj = $(display_src:.c=.o)
-
-m4_files = m4/smr_OPTIONAL_LIB.m4 m4/smr_REQUIRED_LIB.m4 m4/smr_WITH_BUILD_PATH.m4
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
