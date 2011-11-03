@@ -2,6 +2,21 @@
 #include  <X11/Xlib.h>
 #include  <stdio.h>
 
+/* This function relied upon an undocumented feature of GLUT - the
+ * ability to reference the X display directly through the global
+ * variable "__glutDisplay".  New implementations of GLUT
+ * (esp. FreeGlut) do not implement this.  It appears to be mostly
+ * harmless to simply "stub out" this function.
+ */
+#ifndef USE_COPY_X_COLOURS
+
+public void copy_X_colours(int n_colours_to_copy)
+{
+    /* Do nothing */
+}
+
+#else
+
 extern  void  glut_set_colour_entry(
     int     ind,
     Real    r,
@@ -54,3 +69,6 @@ public  void  copy_X_colours(
         glut_set_colour_entry( ind, r, g, b );
     }
 }
+#endif 
+
+

@@ -11,7 +11,7 @@ dnl
 dnl Separate multiple directories using colons; e.g.
 dnl "--with-build-path=DIR1:DIR2:DIR3".
 dnl
-dnl @version $Id: smr_WITH_BUILD_PATH.m4,v 1.1 2001/07/25 03:55:49 stever Exp $
+dnl @version $Id: smr_WITH_BUILD_PATH.m4,v 1.3 2004/04/07 14:20:09 bert Exp $
 dnl @author Steve M. Robbins <smr@debian.org>
 
 AC_DEFUN([smr_WITH_BUILD_PATH],
@@ -20,6 +20,7 @@ AC_DEFUN([smr_WITH_BUILD_PATH],
     [  --with-build-path=DIR   build using DIR/include and DIR/lib],
     [
 	for d in `echo $withval | tr : ' '`; do
+            test -d $d || AC_MSG_ERROR([build path $d not found.])
 	    test -d $d/include && CPPFLAGS="$CPPFLAGS -I$d/include"
 	    test -d $d/lib && LDFLAGS="$LDFLAGS -L$d/lib"
 	done
