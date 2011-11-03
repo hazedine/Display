@@ -3,7 +3,7 @@ SUBDIRS = GLUT_windows G_graphics OpenGL_graphics
 EXTRA_DIST = Include/GS_graphics.h Include/graphics.h \
 	Include/graphics_base.h Include/graphics_prototypes.h \
 	Include/graphics_struct.h Include/random_order.h \
-	Include/save.h
+	Include/save.h Include/GL/glut.h Include/GL/freeglut_std.h
 
 noinst_LIBRARIES = libbicgl.a
 

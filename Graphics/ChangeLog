@@ -1,3 +1,6 @@
+2006-05-05  Claude Lepage <claude@bic.mni.mcgill.ca>
+	* dirty hack to add Include/GL/*.h to enable compilation on BIC SGI
+
 2005-04-02  Steve M. Robbins  <steve@nyongwa.montreal.qc.ca>
 
 	* OpenGL_graphics/colour_def.c: 

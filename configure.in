@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 AC_INIT
 AC_CONFIG_SRCDIR([markers/markers.c])
 AC_PREREQ(2.57)
-AM_INIT_AUTOMAKE(Display,1.4.2)
+AM_INIT_AUTOMAKE(Display,1.5.0)
 AC_CONFIG_HEADERS([config.h])
 
 dnl Optional workaround for buggy compiler.
@@ -55,6 +55,20 @@ dnl get OpenGL stuff
 AX_CHECK_GL
 AX_CHECK_GLU
 AX_CHECK_GLUT
+
+dnl check if we found them
+if test "$no_gl" = yes -o "$no_glu" = yes -o "$no_glut" = yes ;
+then
+   AC_MSG_ERROR([
+================================================================================
+WARNING: GL/GLU/GLUT not found.
+
+The GL, GLU, and GLUT libraries are required. (also check libXi and libXmu)
+================================================================================
+   ])
+fi
+
+
 AC_SUBST(GL_LIBS)
 AC_SUBST(GL_CFLAGS)
 AC_SUBST(GLU_LIBS)

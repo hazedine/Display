@@ -175,21 +175,6 @@ private  Window_id  create_GLUT_window(
     BOOLEAN            actual_double_buffer_flag;
     BOOLEAN            actual_depth_buffer_flag;
     int                actual_n_overlay_planes;
-
-    mode = 0;
-
-    if( colour_map_mode )
-        mode |= GLUT_INDEX;
-    else
-        mode |= GLUT_RGB;
-
-    if( double_buffer_flag )
-        mode |= GLUT_DOUBLE;
-    else
-        mode |= GLUT_SINGLE;
-
-    if( depth_buffer_flag )
-        mode |= GLUT_DEPTH;
     
     if( initial_x_pos >= 0 && initial_y_pos >= 0 )
     {
@@ -209,121 +194,26 @@ private  Window_id  create_GLUT_window(
     else
         glutInitWindowSize( DEFAULT_WINDOW_X_SIZE, DEFAULT_WINDOW_Y_SIZE );
 
-    glutInitDisplayMode( mode );
-
-    /* bert - verify that the desired display mode is supported.
-     * Owing to the unhelpful design of GLUT, a bad option in the
-     * display mode will cause the program to exit with a cryptic
-     * error when glutCreateWindow() is called.
-     */
-    if (!glutGet(GLUT_DISPLAY_MODE_POSSIBLE)) {
-      if (colour_map_mode) {
-
-	mode &= ~GLUT_INDEX;
-	mode |= GLUT_RGB;
-
-	colour_map_mode = 0;
-      }
-      glutInitDisplayMode( mode );
-    }
-
-#ifdef BUG_ON_DISPLAY_ON_LINUX_XTERM
-/*
-  --- when running on SGI, displaying on Linux xterm, doing this get causes
-      some windows to get the wrong colour map mode
-*/
-
-    if( !glutGet( (GLenum) GLUT_DISPLAY_MODE_POSSIBLE ) &&
-        double_buffer_flag )
-    {
-        print_error( "Double buffer mode unavailable, trying single buffer\n" );
-        mode -= GLUT_DOUBLE;
-        mode |= GLUT_SINGLE;
-        glutInitDisplayMode( mode );
-    }
-
-    if( !glutGet( (GLenum) GLUT_DISPLAY_MODE_POSSIBLE ) )
-    {
-        print_error( "Could not open GLUT window in Display mode (%d,%d) for OpenGL\n",
-                     colour_map_mode, double_buffer_flag );
-        return( -1 );
-    }
-#endif
-
+    // Forget being clever, lets just always go for double buffered
+    // Andrew Janke - 23/8/2010
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+    
     window_id = glutCreateWindow( title );
-
     if( window_id < 1 )
-    {
+    { 
         print_error( "Could not open GLUT window for OpenGL\n" );
         return( -1 );
     }
 
-    rgba = glutGet((GLenum) GLUT_WINDOW_RGBA);
-    doub = glutGet((GLenum) GLUT_WINDOW_DOUBLEBUFFER);
-    depth = glutGet((GLenum) GLUT_WINDOW_DEPTH_SIZE);
-
-    /* why? I don't understand... */
-    /* glutUseLayer( GLUT_NORMAL ); */
-
     glutPopWindow();
 
-    actual_n_overlay_planes = 0;
-    set_event_callbacks_for_current_window( actual_n_overlay_planes );
+     actual_n_overlay_planes = 0;
+     set_event_callbacks_for_current_window( actual_n_overlay_planes );
 
-    actual_colour_map_mode = !rgba;
-    actual_double_buffer_flag = doub;
-    actual_depth_buffer_flag = (depth > 0);
-
-    if( actual_colour_map_mode != colour_map_mode )
-    {
-        print_error( "Could not get requested colour_map_mode(%d), got(%d,%d)\n",
-                     colour_map_mode,
-                     !glutGet( (GLenum) GLUT_WINDOW_RGBA ),
-                     glutGet( (GLenum) GLUT_WINDOW_COLORMAP_SIZE ) );
-
-/*
-        glutDestroyWindow( window_id );
-        window_id = -1;
-*/
-    }
-
-    if( actual_double_buffer_flag && !double_buffer_flag )
-    {
-
-        /*--- print_error( "For some reason got double buffer window, when requesting single buffer.\n" );*/
-
-        /*--- testing has shown that it actually does get a single
-              buffer mode, but reports double, so there may be a bug
-              in GLUT, and we just assign the double buffering to FALSE */
-        actual_double_buffer_flag = FALSE;
-    }
-    else if( !actual_double_buffer_flag && double_buffer_flag )
-    {
-        print_error( "Could not get requested double buffer window\n" );
-    }
-
-#ifdef  USING_X11
-    if( window_id >= 1 && actual_colour_map_mode )
-    {
-        int   n_colours_to_copy;
-
-        n_colours_to_copy = glutGet( (GLenum) GLUT_WINDOW_COLORMAP_SIZE );
-
-        copy_X_colours( n_colours_to_copy );
-    }
-#endif
-
-    if( actual_colour_map_mode_ptr != NULL )
-        *actual_colour_map_mode_ptr = actual_colour_map_mode;
-
-    if( actual_double_buffer_flag_ptr != NULL )
-        *actual_double_buffer_flag_ptr = actual_double_buffer_flag;
-
-    if( actual_depth_buffer_flag_ptr != NULL )
-        *actual_depth_buffer_flag_ptr = actual_depth_buffer_flag;
-
-    if( actual_n_overlay_planes_ptr != NULL )
-        *actual_n_overlay_planes_ptr = actual_n_overlay_planes;
+    *actual_colour_map_mode_ptr = FALSE;
+    *actual_double_buffer_flag_ptr = TRUE;
+    *actual_depth_buffer_flag_ptr = TRUE;
+    *actual_n_overlay_planes_ptr = 0;
 
     return( window_id );
 }

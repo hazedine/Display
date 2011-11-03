@@ -16,7 +16,7 @@
 ---------------------------------------------------------------------------- */
 
 #ifndef lint
-static char display_main_rcsid[] = "$Header: /software/source/visualization/Display/Include/main.h,v 1.18 1998/02/20 14:59:59 david Exp $";
+static char display_main_rcsid[] = "$Header: /private-cvsroot/visualization/Display/Include/main.h,v 1.18 1998/02/20 14:59:59 david Exp $";
 #endif
 
 #include  <display_types.h>
