@@ -1,3 +1,8 @@
+2011-11-04 Haz-Edine Assemlal<haz-edine@assemlal.com>
+	* aclocal.m4: replace embedded libtool with system-wide
+	* GIT: now using a decentralized versioning system.
+	Future logs will now be available using git log.
+
 2008-08-18  Andrew L Janke <a.janke@gmail.com>
 	* configure.in: added error output if missing GLUT/GL
 	* epm-header.in: removed netcdf, changed from Register to register
