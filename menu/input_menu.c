@@ -128,6 +128,7 @@ MENU_F(label_connected_no_threshold) \
 MENU_F(label_slice) \
 MENU_F(clear_slice) \
 MENU_F(label_connected_3d) \
+MENU_F(clear_label_connected_3d) \
 MENU_F(dilate_labels) \
 MENU_F(erode_labels) \
 MENU_F(set_colour_limits) \
