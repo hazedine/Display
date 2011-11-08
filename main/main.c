@@ -18,7 +18,7 @@ static char rcsid[] = "$Header: /private-cvsroot/visualization/Display/main/main
 
 #include  <display.h>
 
-private  STRING   version = "1.3      Aug 25, 1998";
+private  STRING   version = "1.5.1 Nov, 2011";
 
 #define  MAX_TITLE_LENGTH   200
 
