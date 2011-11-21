@@ -166,7 +166,6 @@ private  DEF_EVENT_FUNCTION( handle_menu_resize )
     rebuild_menu( menu_window );
     rebuild_cursor_position_model( three_d );
     update_menu_name_text( menu_window );
-    rebuild_selected_list( three_d, menu_window );
 
     return( OK );
 }

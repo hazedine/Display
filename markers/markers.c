@@ -70,7 +70,6 @@ public  BOOLEAN  update_current_marker(
     return( found );
 }
 
-
 private  void  initialize_marker_parameters(
     display_struct    *marker_window )
 {
@@ -112,6 +111,21 @@ private  void  initialize_marker_parameters(
     marker->font_size = scale * Menu_window_font_size;
 }
 
+private  DEF_EVENT_FUNCTION( handle_marker_resize )
+{
+    display_struct  *marker_window, *three_d;
+
+    three_d = display->associated[THREE_D_WINDOW];
+    marker_window = three_d->associated[MARKER_WINDOW];
+
+    initialize_marker_parameters( marker_window );
+    rebuild_cursor_position_model( three_d );
+    rebuild_selected_list( three_d, marker_window );
+
+    return( OK );
+}
+
+
 public  Status  initialize_marker_window(
     display_struct    *marker_window)
 {
@@ -127,9 +141,9 @@ public  Status  initialize_marker_window(
 
     G_set_transparency_state( marker_window->window, OFF );
 
-//    initialize_resize_events( marker_window );
-//    add_action_table_function( &marker_window->action_table, WINDOW_RESIZE_EVENT,
-//                               handle_marker_resize );
+    initialize_resize_events( marker_window );
+    add_action_table_function( &marker_window->action_table, WINDOW_RESIZE_EVENT,
+                               handle_marker_resize );
 
     marker->default_x_size = Canonical_marker_window_width;
     marker->default_y_size = Canonical_marker_window_height;
