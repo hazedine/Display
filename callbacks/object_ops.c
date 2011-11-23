@@ -336,8 +336,19 @@ private  BOOLEAN  remove_current_object_from_hierarchy(
 public  DEF_MENU_FUNCTION( delete_current_object )
 {
     object_struct    *object;
+    display_struct   *slice_window;
+    Real              voxel[MAX_DIMENSIONS];
+    BOOLEAN           changed;
+    int               volume_index;
 
-    if( get_current_object( display, &object ) &&
+    slice_window = display->associated[SLICE_WINDOW];
+    set_cursor_to_marker(display, menu_window, menu_entry);
+    if( slice_window != (display_struct  *) 0 )
+    {
+        (void) update_voxel_from_cursor( slice_window );
+    }
+
+	if( get_current_object( display, &object ) &&
         get_object_type( object ) == POLYGONS &&
         get_polygons_ptr(object) ==
                    display->three_d.surface_extraction.polygons )
@@ -348,6 +359,7 @@ public  DEF_MENU_FUNCTION( delete_current_object )
 
     if( remove_current_object_from_hierarchy( display, &object ) )
     {
+        clear_label_connected_3d(display, menu_window, menu_entry);
         delete_object( object );
         pop_menu_one_level( display->associated[MENU_WINDOW] );
     }
