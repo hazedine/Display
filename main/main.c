@@ -16,9 +16,9 @@
 static char rcsid[] = "$Header: /private-cvsroot/visualization/Display/main/main.c,v 1.64 2005/04/03 03:38:12 stever Exp $";
 #endif
 
+#include "config.h"
 #include  <display.h>
 
-private  STRING   version = "1.3      Aug 25, 1998";
 
 #define  MAX_TITLE_LENGTH   200
 
@@ -32,7 +32,7 @@ private  void      initialize_view_to_fit(
 
 /* The first directory is set using compiler flag -D */
 /*#define  HARD_CODED_DISPLAY_DIRECTORY1    "/usr/local/mni/lib"*/
-#define  HARD_CODED_DISPLAY_DIRECTORY2    "/usr/local/lib"
+/*#define  HARD_CODED_DISPLAY_DIRECTORY2    "/usr/local/lib"*/
 #define  GLOBALS_FILENAME                 "Display.globals"
 #define  MENU_FILENAME                    "Display.menu"
 
@@ -173,7 +173,7 @@ int  main(
     {
         if( equal_strings( filename, "-version" ) )
         {
-            print( "%s:  Version: %s\n", argv[0], version );
+            print( "%s %s\n", PROJECT_NAME,	PROJECT_VERSION );
             return( 0 );
         }
         else if( equal_strings( filename, "-label" ) )
@@ -221,8 +221,11 @@ int  main(
             }
 
             if( load_graphics_file( graphics, filename,
-                                    next_is_label_volume ) != OK )
-                print( "Error loading %s\n", filename );
+            		next_is_label_volume ) != OK ) {
+            	print( "Error loading %s\n", filename );
+            	if( Exit_error_load_file )
+            		exit(EX_NOINPUT);
+            }
 
             next_is_label_volume = FALSE;
         }
