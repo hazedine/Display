@@ -90,16 +90,6 @@ START_GLOBALS
     DEF_GLOBAL( Default_marker_label, STRING, "Marker" )
     DEF_GLOBAL( Marker_pick_size, Real, 3.0 )
 
-    DEF_GLOBAL( N_selected_displayed, int, 12 )
-    DEF_GLOBAL( Selected_x_origin, Real, 650.0 )
-    DEF_GLOBAL( Selected_y_origin, Real, 240.0 )
-    DEF_GLOBAL_COLOUR( Selected_colour )
-    DEF_GLOBAL_COLOUR( Visible_colour )
-    DEF_GLOBAL_COLOUR( Invisible_colour )
-    DEF_GLOBAL( Character_height_in_pixels, Real, 10.0 )
-    DEF_GLOBAL( Selected_box_x_offset, Real, 2.0 )
-    DEF_GLOBAL( Selected_box_y_offset, Real, 2.0 )
-
     DEF_GLOBAL_COLOUR( Viewport_feedback_colour )
     DEF_GLOBAL( Viewport_min_x_size, Real, 0.1 )
     DEF_GLOBAL( Viewport_min_y_size, Real, 0.1 )
@@ -383,10 +373,19 @@ START_GLOBALS
     DEF_GLOBAL( Hide_3D_window, BOOLEAN, TRUE)
     DEF_GLOBAL( Hide_menu_window, BOOLEAN, FALSE)
 
-    DEF_GLOBAL( Initial_marker_window_width, int, 860 )
-    DEF_GLOBAL( Initial_marker_window_height, int, 800 )
-    DEF_GLOBAL( Canonical_marker_window_width, int, 860 )
-    DEF_GLOBAL( Canonical_marker_window_height, int, 800 )
+    DEF_GLOBAL( Initial_marker_window_width, int, 250 )
+    DEF_GLOBAL( Initial_marker_window_height, int, 600 )
+    DEF_GLOBAL( Canonical_marker_window_width, int, 250 )
+    DEF_GLOBAL( Canonical_marker_window_height, int, 600 )
 
+    DEF_GLOBAL( N_selected_displayed, int, 50 )
+    DEF_GLOBAL( Selected_x_origin, Real, 20.0 )
+    DEF_GLOBAL( Selected_y_origin, Real, 580.0 )
+    DEF_GLOBAL_COLOUR( Selected_colour )
+    DEF_GLOBAL_COLOUR( Visible_colour )
+    DEF_GLOBAL_COLOUR( Invisible_colour )
+    DEF_GLOBAL( Character_height_in_pixels, Real, 10.0 )
+    DEF_GLOBAL( Selected_box_x_offset, Real, 2.0 )
+    DEF_GLOBAL( Selected_box_y_offset, Real, 2.0 )
 
 END_GLOBALS
