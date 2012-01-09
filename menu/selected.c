@@ -185,16 +185,16 @@ private  STRING  get_object_label(
 
 public  void  rebuild_selected_list(
     display_struct    *display,
-    display_struct    *menu_window )
+    display_struct    *marker_window )
 {
     int            i, start_index, n_objects, selected_index;
     Colour         col;
     STRING         label;
     model_struct   *selected_model, *model;
     text_struct    *text;
-    display_struct *marker_window;
-
-    marker_window = menu_window->associated[MARKER_WINDOW];
+//    display_struct *marker_window;
+//
+//    marker_window = menu_window->associated[MARKER_WINDOW];
 
     selected_model = get_graphics_model( marker_window, SELECTED_MODEL );
 
