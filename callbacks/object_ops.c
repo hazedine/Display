@@ -351,6 +351,7 @@ public  DEF_MENU_FUNCTION( delete_current_object )
         delete_object( object );
         pop_menu_one_level( display->associated[MENU_WINDOW] );
     }
+    rebuild_selected_list( display, display->associated[MARKER_WINDOW]);
 
     return( OK );
 }
