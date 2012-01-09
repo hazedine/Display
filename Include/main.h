@@ -52,6 +52,7 @@ static char display_main_rcsid[] = "$Header: /private-cvsroot/visualization/Disp
 typedef  enum  { THREE_D_WINDOW,
                  MENU_WINDOW,
                  SLICE_WINDOW,
+                 MARKER_WINDOW,
                  N_WINDOW_TYPES }
                window_types;
 
@@ -89,6 +90,7 @@ typedef  struct  display_struct
     three_d_window_struct      three_d;    /* should be a union of three */
     menu_window_struct         menu;
     slice_window_struct        slice;
+    menu_window_struct         marker;
 
     Gwindow                    window;
     Point                      prev_mouse_position;

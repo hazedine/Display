@@ -383,4 +383,10 @@ START_GLOBALS
     DEF_GLOBAL( Hide_3D_window, BOOLEAN, TRUE)
     DEF_GLOBAL( Hide_menu_window, BOOLEAN, FALSE)
 
+    DEF_GLOBAL( Initial_marker_window_width, int, 860 )
+    DEF_GLOBAL( Initial_marker_window_height, int, 800 )
+    DEF_GLOBAL( Canonical_marker_window_width, int, 860 )
+    DEF_GLOBAL( Canonical_marker_window_height, int, 800 )
+
+
 END_GLOBALS

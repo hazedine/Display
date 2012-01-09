@@ -184,7 +184,6 @@ static STRING default_menu_string =
 #endif
 ;
 
-
 public  Status  initialize_menu(
     display_struct    *menu_window,
     STRING            default_directory1,
@@ -627,10 +626,11 @@ public  void  update_all_menu_text(
     display_struct   *display )
 {
     int                 key;
-    display_struct      *menu_window;
+    display_struct      *menu_window, *marker_window;
     menu_entry_struct   *menu_entry;
 
     menu_window = display->associated[MENU_WINDOW];
+    marker_window = display->associated[MARKER_WINDOW];
 
     for_less( key, 0, N_CHARACTERS )
     {
@@ -641,6 +641,7 @@ public  void  update_all_menu_text(
     }
 
     set_update_required( menu_window, NORMAL_PLANES );
+    set_update_required( marker_window, NORMAL_PLANES );
 }
 
 private  void  update_menu_name_text(

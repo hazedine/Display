@@ -183,6 +183,7 @@ public  Status  load_graphics_file(
         }
 
         rebuild_selected_list( display, display->associated[MENU_WINDOW] );
+        rebuild_selected_list( display, display->associated[MARKER_WINDOW] );
     }
     else
         delete_object( object );

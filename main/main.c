@@ -69,7 +69,7 @@ int  main(
     int              i, view;
     STRING           filename;
     display_struct   *graphics;
-    display_struct   *menu, *slice_window;
+    display_struct   *menu, *slice_window, *marker;
     STRING           globals_filename, runtime_directory;
     int              n_directories;
     STRING           *directories;
@@ -138,7 +138,15 @@ int  main(
                                 Initial_menu_window_height ) != OK )
         return( 1 );
     delete_string( title );
+    if( Hide_menu_window )
+		glutHideWindow();
 
+    if( create_graphics_window( MARKER_WINDOW, ON, &marker, title,
+                                Initial_marker_window_width,
+                                Initial_marker_window_height ) != OK )
+    	return( 1 );
+
+    delete_string( title );
     if( Hide_menu_window )
 		glutHideWindow();
 
@@ -146,10 +154,17 @@ int  main(
     graphics->associated[THREE_D_WINDOW] = graphics;
     graphics->associated[MENU_WINDOW] = menu;
     graphics->associated[SLICE_WINDOW] = (display_struct *) 0;
+    graphics->associated[MARKER_WINDOW] = marker;
 
     menu->associated[THREE_D_WINDOW] = graphics;
     menu->associated[MENU_WINDOW] = menu;
     menu->associated[SLICE_WINDOW] = (display_struct *) 0;
+    menu->associated[MARKER_WINDOW] = marker;
+
+    marker->associated[THREE_D_WINDOW] = graphics;
+    marker->associated[MENU_WINDOW] = menu;
+    marker->associated[SLICE_WINDOW] = (display_struct *) 0;
+    marker->associated[MARKER_WINDOW] = marker;
 
     if( initialize_menu( menu, runtime_directory,
 			 getenv( "HOME" ),
@@ -157,6 +172,9 @@ int  main(
 			 HARD_CODED_DISPLAY_DIRECTORY2,
 			 MENU_FILENAME ) != OK )
 	return 1;
+
+    if( initialize_marker_window( marker ) != OK )
+    return 1;
 
     delete_string( runtime_directory );
 
@@ -178,6 +196,7 @@ int  main(
     update_view( graphics );
     update_all_menu_text( graphics );
     set_update_required( graphics, NORMAL_PLANES );
+    set_update_required( marker, NORMAL_PLANES );
 
     (void) main_event_loop();
 
