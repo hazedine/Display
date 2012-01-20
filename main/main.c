@@ -199,6 +199,12 @@ int  main(
     set_update_required( graphics, NORMAL_PLANES );
     set_update_required( marker, NORMAL_PLANES );
 
+	if( Hide_3D_window )
+		glutHideWindow();
+
+	if( Hide_menu_window )
+		glutHideWindow();
+
     (void) main_event_loop();
 
     terminate_graphics();
