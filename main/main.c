@@ -141,6 +141,7 @@ int  main(
     if( Hide_menu_window )
 		glutHideWindow();
 
+    title = concat_strings( PROJECT_NAME, ": Marker" );
     if( create_graphics_window( MARKER_WINDOW, ON, &marker, title,
                                 Initial_marker_window_width,
                                 Initial_marker_window_height ) != OK )
