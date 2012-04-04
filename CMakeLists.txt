@@ -15,7 +15,7 @@ if( EXISTS "${CMAKE_SOURCE_DIR}/.git" )
 endif( EXISTS "${CMAKE_SOURCE_DIR}/.git")
 
 if( "${PROJECT_VERSION}" STREQUAL "" )
-    set (PROJECT_VERSION 1.6.0)
+    set (PROJECT_VERSION 1.6.4)
 endif( "${PROJECT_VERSION}" STREQUAL "" )
 
 message(STATUS "Project version: ${PROJECT_VERSION}")
