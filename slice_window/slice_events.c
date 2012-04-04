@@ -276,11 +276,11 @@ private  void  set_slice_voxel_position(
 
         if( update_current_marker( display, volume_index, clipped_voxel ) )
         {
-            rebuild_selected_list( display,
-                                   slice_window->associated[MENU_WINDOW] );
+            rebuild_selected_list( display, slice_window->associated[MENU_WINDOW] );
+            set_update_required( slice_window->associated[MENU_WINDOW], NORMAL_PLANES );
 
-            set_update_required( slice_window->associated[MENU_WINDOW],
-                                 NORMAL_PLANES );
+            rebuild_selected_list( display, slice_window->associated[MARKER_WINDOW] );
+            set_update_required( slice_window->associated[MARKER_WINDOW], NORMAL_PLANES );
         }
     }
 }
