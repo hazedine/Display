@@ -254,7 +254,9 @@ public  BOOLEAN  window_is_up_to_date(
 private  void  update_all_three_d_windows( void )
 {
     update_this_type_of_windows( MENU_WINDOW );
+    update_this_type_of_windows( MARKER_WINDOW );
     update_this_type_of_windows( THREE_D_WINDOW );
+    update_this_type_of_windows( MARKER_WINDOW );
 }
 
 private  void  update_all_slice_windows( void )

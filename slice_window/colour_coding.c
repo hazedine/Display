@@ -286,7 +286,18 @@ public  void  initialize_slice_colour_coding(
     int               volume_index )
 {
     Real             low_limit, high_limit;
-    Real             min_value, max_value;
+    histogram_struct   histogram;
+    Volume             volume;
+    Real               *histo_counts;
+    Real               scale_factor, trans_factor;
+    int                nbbins, axis_index, voxel_index;
+    int                x, y, z, sizes[MAX_DIMENSIONS];
+    int                start[MAX_DIMENSIONS], end[MAX_DIMENSIONS];
+    int 			   sum_count, count, idx;
+    Real               min_value, max_value, value;
+    progress_struct    progress;
+    BOOLEAN			   low_limit_done, high_limit_done;
+
 
     initialize_colour_coding(
            &slice_window->slice.volumes[volume_index].colour_coding,
@@ -313,16 +324,99 @@ public  void  initialize_slice_colour_coding(
     get_volume_real_range( get_nth_volume(slice_window,volume_index),
                            &min_value, &max_value );
 
-    if( Initial_low_absolute_position >= 0 )
-    	low_limit = Initial_low_absolute_position;
-    else
-    	low_limit = min_value + Initial_low_limit_position * (max_value - min_value);
+    if( Initial_histogram_contrast ) {
+        volume = get_nth_volume( slice_window, volume_index );
+        get_volume_real_range( volume, &min_value, &max_value );
+        get_volume_sizes( volume, sizes );
 
-    if( Initial_high_absolute_position >= 0 )
-        high_limit = Initial_high_absolute_position;
-    else
-    	high_limit = min_value + Initial_high_limit_position * (max_value - min_value);
+        initialize_histogram( &histogram, (max_value - min_value) / 1000.0, min_value );
+        start[X] = 0;
+        end[X] = sizes[X];
+        start[Y] = 0;
+        end[Y] = sizes[Y];
+        start[Z] = 0;
+        end[Z] = sizes[Z];
 
+        axis_index = -1;
+        voxel_index = 0;
+
+        if( axis_index >= 0 && voxel_index >= 0 && voxel_index < sizes[axis_index] )
+        {
+            start[axis_index] = voxel_index;
+            end[axis_index] = voxel_index+1;
+        }
+
+        if( axis_index < 0 )
+        {
+            initialize_progress_report( &progress, FALSE, sizes[X] * sizes[Y],
+                                        "Histogramming" );
+        }
+        for_less( x, start[X], end[X] )
+        {
+            for_less( y, start[Y], end[Y] )
+            {
+                for_less( z, start[Z], end[Z] )
+                {
+                    {
+                        value = get_volume_real_value( volume, x, y, z, 0, 0 );
+                        add_to_histogram( &histogram, value );
+                    }
+                }
+
+                if( axis_index < 0 )
+                    update_progress_report( &progress, x * sizes[Y] + y + 1 );
+            }
+        }
+
+        if( axis_index < 0 )
+            terminate_progress_report( &progress );
+
+        nbbins = get_histogram_counts( &histogram, &histo_counts,
+        		Default_filter_width, &scale_factor, &trans_factor );
+
+        sum_count = 0;
+        for_less( idx, Initial_histogram_low_clip_index, nbbins )
+			sum_count += histo_counts[idx];
+
+		count = 0;
+		low_limit_done = FALSE;
+		high_limit_done = FALSE;
+		for_less( idx, Initial_histogram_low_clip_index, nbbins )
+		{
+			if (!(low_limit_done) && (count / (Real)sum_count > Initial_histogram_low))
+			{
+				low_limit = idx * histogram.delta + histogram.offset;
+				low_limit_done = TRUE;
+			}
+
+			if (count / (Real) sum_count >= Initial_histogram_high)
+			{
+				high_limit = idx * histogram.delta + histogram.offset;
+				high_limit_done = TRUE;
+				break;
+			}
+			count += histo_counts[idx];
+		}
+
+		if (!low_limit_done)
+			low_limit = histogram.min_index * histogram.delta + histogram.offset ;
+
+		if (!high_limit_done)
+			high_limit = (histogram.max_index + 1) * histogram.delta + histogram.offset ;
+        delete_histogram(&histogram);
+    }
+    else
+    {
+    	if (Initial_low_absolute_position >= 0)
+			low_limit = Initial_low_absolute_position;
+		else
+			low_limit = min_value + Initial_low_limit_position * (max_value - min_value);
+
+		if (Initial_high_absolute_position >= 0)
+			high_limit = Initial_high_absolute_position;
+		else
+			high_limit = min_value + Initial_high_limit_position * (max_value - min_value);
+    }
     change_colour_coding_range( slice_window, volume_index,
                                 low_limit, high_limit );
 }
@@ -859,6 +953,106 @@ public  int  get_voxel_label(
                      x, y, z ) );
 }
 
+
+public void update_label_tag(
+	    display_struct   *display,
+	    int              volume_index,
+	    int              x,
+	    int              y,
+	    int              z,
+	    int              label)
+{
+    Volume            label_volume;
+    struct stack_list ** label_stack;
+    struct stack_real *top_s;
+    object_struct     *object;
+    marker_struct     *marker;
+    model_struct      *current_model;
+    Real              *world_dyn;
+    display_struct 	  *marker_window;
+	display_struct 	  *three_d_window;
+    Real		      world[MAX_DIMENSIONS];
+    Real              voxel_real[MAX_DIMENSIONS];
+    int			      voxel_int[MAX_DIMENSIONS];
+    int			      value;
+
+    marker_window = display->associated[MARKER_WINDOW];
+    three_d_window = display->associated[THREE_D_WINDOW];
+    label_stack = marker_window->label_stack;
+    label_volume = get_nth_label_volume(display, volume_index);
+
+    voxel_real[X] = x;
+	voxel_real[Y] = y;
+	voxel_real[Z] = z;
+    convert_voxel_to_world( label_volume, voxel_real, &world[X], &world[Y], &world[Z] );
+	if (label) /* add a voxel to a label region */
+	{
+		if (label_stack[label] == NULL)
+		{
+			label_stack[label] = stack_new();
+
+			object = create_object( MARKER );
+            marker = get_marker_ptr( object );
+            fill_Point( marker->position, world[X], world[Y], world[Z]);
+            marker->label = create_string( "" );
+            marker->structure_id = -1;
+            marker->patient_id = -1;
+            marker->size = display->three_d.default_marker_size;
+            marker->colour = display->three_d.default_marker_colour;
+            marker->type = display->three_d.default_marker_type;
+
+            current_model = get_current_model( three_d_window );
+            add_object_to_list(&current_model->n_objects,
+					&current_model->objects, object);
+			rebuild_selected_list(three_d_window, marker_window);
+
+		}
+		ALLOC( world_dyn, MAX_DIMENSIONS );
+		world_dyn[X] = world[X];
+		world_dyn[Y] = world[Y];
+		world_dyn[Z] = world[Z];
+		label_stack[label] = push(label_stack[label], world_dyn);
+	}
+
+	/* remove a voxel from a label region */
+	value = get_3D_volume_label_data(label_volume, x, y, z);
+	if (value) /* only on not label voxel */
+	{
+		top_s = top(label_stack[value]);
+		if ((top_s->cur[X] - world[X]) < 1e-10f
+				&& (top_s->cur[Y] - world[Y]) < 1e-10f
+				&& (top_s->cur[Z] - world[Z]) < 1e-10f)
+		{
+			do
+			{
+				top_s = top_s->next;
+				pop(label_stack[value]);
+				if (top_s == NULL)
+				{
+					FREE( label_stack[value] );
+					label_stack[value] = NULL;
+					voxel_int[X] = x;
+					voxel_int[Y] = y;
+					voxel_int[Z] = z;
+					convert_int_to_real_voxel(MAX_DIMENSIONS, voxel_int,
+							voxel_real);
+					update_current_marker(marker_window, volume_index, voxel_real);
+					get_current_object( three_d_window, &object );
+					remove_current_object_from_hierarchy(three_d_window, &object);
+					delete_object(object);
+					rebuild_selected_list(three_d_window, marker_window);
+					break;
+				}
+				convert_world_to_voxel(label_volume, top_s->cur[X],
+						top_s->cur[Y], top_s->cur[Z], voxel_real);
+				convert_real_to_int_voxel(MAX_DIMENSIONS, voxel_real, voxel_int);
+
+			} while (get_3D_volume_label_data(label_volume, voxel_int[X],
+					voxel_int[Y], voxel_int[Z]) != value);
+		}
+	}
+}
+
 public  void  set_voxel_label(
     display_struct   *display,
     int              volume_index,
@@ -867,10 +1061,14 @@ public  void  set_voxel_label(
     int              z,
     int              label )
 {
-    tell_surface_extraction_label_changed( display, volume_index, x, y, z );
 
-    set_volume_label_data_5d( get_nth_label_volume(display,volume_index),
-                              x, y, z, 0, 0, label );
+    tell_surface_extraction_label_changed( display, volume_index, x, y, z );
+    if( Tags_from_label )
+    	update_label_tag(display, volume_index, x, y, z, label);
+
+    set_volume_label_data_5d( get_nth_label_volume(display, volume_index),
+    		x, y, z, 0, 0, label );
+
 }
 
 public  Status  load_user_defined_colour_coding(

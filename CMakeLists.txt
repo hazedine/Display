@@ -15,7 +15,7 @@ if( EXISTS "${CMAKE_SOURCE_DIR}/.git" )
 endif( EXISTS "${CMAKE_SOURCE_DIR}/.git")
 
 if( "${PROJECT_VERSION}" STREQUAL "" )
-    set (PROJECT_VERSION 1.6.0)
+    set (PROJECT_VERSION 1.6.4)
 endif( "${PROJECT_VERSION}" STREQUAL "" )
 
 message(STATUS "Project version: ${PROJECT_VERSION}")
@@ -73,6 +73,14 @@ include_directories( ${MINC_INCLUDE_DIR} )
 # add_library(volume_io2 STATIC IMPORTED)
 # set_property(TARGET volume_io2 PROPERTY IMPORTED_LOCATION ${MINC_volume_io2_LIBRARY})
 
+# LIBM
+#find_package(LibM REQUIRED)
+#include_directories( ${LibM_INCLUDE_DIR} )
+
+# ZLIB
+find_package(ZLIB REQUIRED)
+include_directories( ${ZLIB_INCLUDE_DIR} )
+
 # BICpl
 find_package(BICPL REQUIRED)
 include_directories( ${BICPL_INCLUDE_DIR} )
@@ -92,6 +100,8 @@ include_directories( ${GLUT_INCLUDE_DIR} )
 file (GLOB_RECURSE C_SRC "./*.c")
 file (GLOB_RECURSE C_REMOVE "./*.include.c" "./*supports_gl.c" "./*CMakeCCompilerId.c")
 list (REMOVE_ITEM C_SRC ${C_REMOVE})
+
+#message(STATUS "${C_SRC}")
 
 #----------------------------------------------------------------------
 # RPATH handling
@@ -122,14 +132,28 @@ message(STATUS "RPATH: ${CMAKE_INSTALL_RPATH}")
 add_executable (Display ${C_SRC})
 
 # Link all modules to create the executable
-target_link_libraries(Display 
-  ${MINC_LIBRARIES}
-  ${NetCDF_C_LIBRARY}
-  ${HDF5_C_LIBRARIES} 
-  ${ZLIB_LIBRARIES}
-  ${BICPL_LIBRARY}
-  ${GLUT_glut_LIBRARY} 
-  ${OPENGL_gl_LIBRARY})
+if (DISPLAY_BUILD_STATIC)
+  set (LINK_LIBRARIES   
+      ${MINC_LIBRARIES}
+      ${NetCDF_C_LIBRARY}
+      ${HDF5_hdf5_hl_LIBRARY_RELEASE} ${HDF5_hdf5_LIBRARY_RELEASE} 
+      ${ZLIB_LIBRARIES}
+      ${BICPL_LIBRARY}
+      ${GLUT_glut_LIBRARY} 
+      ${OPENGL_gl_LIBRARY}
+      -lm -pthread)
+else (DISPLAY_BUILD_STATIC)
+  set (LINK_LIBRARIES   
+      ${MINC_LIBRARIES}
+      ${NetCDF_C_LIBRARY}
+      ${HDF5_C_LIBRARIES}
+      ${ZLIB_LIBRARIES}
+      ${BICPL_LIBRARY}
+      ${GLUT_glut_LIBRARY} 
+      ${OPENGL_gl_LIBRARY})
+endif (DISPLAY_BUILD_STATIC)
+
+target_link_libraries(Display ${LINK_LIBRARIES})
   
 # Generate an install target
 install(TARGETS Display RUNTIME DESTINATION bin)

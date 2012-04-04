@@ -18,6 +18,7 @@ static char rcsid[] = "$Header: /private-cvsroot/visualization/Display/callbacks
 
 
 #include  <display.h>
+#include "stack.h"
 
 private  void  set_slice_labels(
     display_struct     *display,
@@ -34,16 +35,18 @@ public  DEF_MENU_FUNCTION( label_voxel )
     Real           voxel[MAX_DIMENSIONS];
     int            view_index, int_voxel[MAX_DIMENSIONS], volume_index;
     display_struct *slice_window;
+    int 		   value;
 
     if( get_slice_window( display, &slice_window ) &&
         get_voxel_under_mouse( slice_window, &volume_index, &view_index, voxel))
     {
         record_slice_under_mouse( slice_window, volume_index );
         convert_real_to_int_voxel( N_DIMENSIONS, voxel, int_voxel );
+        value = get_current_paint_label(slice_window);
         set_voxel_label( slice_window, volume_index,
                          int_voxel[X],
                          int_voxel[Y],
-                         int_voxel[Z], get_current_paint_label(slice_window) );
+                         int_voxel[Z], value );
         set_slice_window_all_update( slice_window, volume_index,
                                      UPDATE_LABELS );
     }
@@ -403,6 +406,198 @@ private  void   save_labels_as_tags(
 
     delete_string( filename );
 }
+
+/*
+ * Create tags from a label image
+ */
+public Status tags_from_label(
+	display_struct *display,
+    int       *n_tag_points,
+    Real      ***tags_volume1,
+    Real      ***tags_volume2,
+    Real      **weights,
+    int       **structure_ids,
+    int       **patient_ids,
+    STRING    *labels[] )
+{
+	display_struct 	*marker_window;
+	display_struct 	*slice_window;
+	Status 			status;
+	Volume 			volume;
+	Volume 			label_volume;
+	int 			sizes[MAX_DIMENSIONS];
+	int  			ind[N_DIMENSIONS];
+	Real 			real_ind[N_DIMENSIONS];
+	Real 			tags[N_DIMENSIONS];
+	int 			value;
+	int 			structure_id, patient_id;
+	Real 			weight;
+	STRING 			label;
+	Real 			*coords;
+	int				i;
+
+	status = OK;
+	slice_window = display->associated[SLICE_WINDOW];
+	marker_window = display->associated[MARKER_WINDOW];
+	volume = get_volume(slice_window);
+	label_volume = get_label_volume(slice_window);
+	get_volume_sizes( label_volume, sizes );
+    *n_tag_points = 0;
+    label = NULL;
+    weight = 0.0;
+    structure_id = -1;
+    patient_id = -1;
+
+    SET_ARRAY_SIZE( marker_window->label_stack, 0,
+    		Initial_num_labels, DEFAULT_CHUNK_SIZE);
+    for (i=0; i<Initial_num_labels; ++i)
+    	marker_window->label_stack[i] = NULL;
+
+
+    for_less (ind[X], 0, sizes[X])
+	{
+		real_ind[X] = (Real) ind[X];
+		for_less (ind[Y], 0, sizes[Y])
+		{
+			real_ind[Y] = (Real) ind[Y];
+			for_less (ind[Z], 0, sizes[Z])
+			{
+				real_ind[Z] = (Real) ind[Z];
+				value = get_volume_label_data( label_volume, ind );
+				if (!value)
+					continue;
+
+				convert_voxel_to_world( volume, real_ind,
+						&tags[X], &tags[Y], &tags[Z] );
+
+			    ALLOC( coords, MAX_DIMENSIONS );
+			    coords[X] = tags[X];
+			    coords[Y] = tags[Y];
+			    coords[Z] = tags[Z];
+
+				if (marker_window->label_stack[value] != NULL)
+				{
+				    marker_window->label_stack[value] = push(marker_window->label_stack[value], coords);
+				}
+				else
+				{
+					marker_window->label_stack[value] = stack_new();
+				    marker_window->label_stack[value] = push(marker_window->label_stack[value], coords);
+
+
+					SET_ARRAY_SIZE( *tags_volume1, *n_tag_points, *n_tag_points+1,
+		                            DEFAULT_CHUNK_SIZE );
+		            ALLOC( (*tags_volume1)[*n_tag_points], 3 );
+		            (*tags_volume1)[*n_tag_points][X] = tags[X];
+		            (*tags_volume1)[*n_tag_points][Y] = tags[Y];
+		            (*tags_volume1)[*n_tag_points][Z] = tags[Z];
+
+		            if (weights != NULL)
+					{
+						SET_ARRAY_SIZE( *weights, *n_tag_points, *n_tag_points+1,
+								DEFAULT_CHUNK_SIZE);
+						(*weights)[*n_tag_points] = weight;
+					}
+
+					if (structure_ids != NULL)
+					{
+						SET_ARRAY_SIZE( *structure_ids, *n_tag_points, *n_tag_points+1,
+								DEFAULT_CHUNK_SIZE);
+						(*structure_ids)[*n_tag_points] = structure_id;
+					}
+
+					if (patient_ids != NULL)
+					{
+						SET_ARRAY_SIZE( *patient_ids, *n_tag_points, *n_tag_points+1,
+								DEFAULT_CHUNK_SIZE);
+						(*patient_ids)[*n_tag_points] = patient_id;
+					}
+
+					if (labels != NULL)
+					{
+						SET_ARRAY_SIZE( *labels, *n_tag_points, *n_tag_points+1,
+								DEFAULT_CHUNK_SIZE);
+						(*labels)[*n_tag_points] = label;
+					}
+					else
+						delete_string(label);
+
+		            ++(*n_tag_points);
+
+				}
+
+
+			}
+		}
+	}
+	return (status);
+}
+
+/*
+ * Mimic the function input_tag_objects_file, but for a label image
+ */
+
+public  Status   input_tag_objects_label(
+    display_struct* display,
+    Colour         marker_colour,
+    Real           default_size,
+    Marker_types   default_type,
+    int            *n_objects,
+    object_struct  **object_list[])
+{
+    Status             status;
+    object_struct      *object;
+    marker_struct      *marker;
+    int                i, n_volumes, n_tag_points, *structure_ids, *patient_ids;
+    STRING             *labels;
+    double             *weights;
+    double             **tags1, **tags2;
+
+    *n_objects = 0;
+
+    n_volumes = 1;
+    status = tags_from_label ( display, &n_tag_points,
+                             &tags1, &tags2, &weights,
+                             &structure_ids, &patient_ids, &labels );
+
+    if( status == OK )
+    {
+        for_less( i, 0, n_tag_points )
+        {
+            object = create_object( MARKER );
+            marker = get_marker_ptr( object );
+            fill_Point( marker->position, tags1[i][X], tags1[i][Y],tags1[i][Z]);
+            marker->label = create_string( labels[i] );
+
+            if( structure_ids[i] >= 0 )
+                marker->structure_id = structure_ids[i];
+            else
+                marker->structure_id = -1;
+
+            if( patient_ids[i] >= 0 )
+                marker->patient_id = patient_ids[i];
+            else
+                marker->patient_id = -1;
+
+            if( weights[i] > 0.0 )
+                marker->size = weights[i];
+            else
+                marker->size = default_size;
+
+            marker->colour = marker_colour;
+            marker->type = default_type;
+
+            add_object_to_list( n_objects, object_list, object );
+        }
+
+        free_tag_points( n_volumes, n_tag_points, tags1, tags2, weights,
+                         structure_ids, patient_ids, labels );
+    }
+
+    return( status );
+
+}
+
 
 /* ARGSUSED */
 
@@ -862,3 +1057,66 @@ public  DEF_MENU_UPDATE(toggle_crop_labels_on_output)
 
     return( state );
 }
+
+
+/* ARGSUSED */
+
+public  DEF_MENU_FUNCTION(clear_label_connected_3d)
+{
+    Real             voxel[MAX_DIMENSIONS];
+    int              range_changed[2][N_DIMENSIONS];
+    int              view_index, int_voxel[MAX_DIMENSIONS];
+    int              label_under_mouse, desired_label, volume_index;
+    display_struct   *slice_window;
+
+    if( get_slice_window( display, &slice_window ) )
+//        get_voxel_under_mouse( slice_window, &volume_index, &view_index, voxel))
+    {
+    	volume_index = get_current_volume_index( slice_window );
+    	get_current_voxel( display, volume_index, voxel);
+
+        convert_real_to_int_voxel( N_DIMENSIONS, voxel, int_voxel );
+
+        label_under_mouse = get_voxel_label( slice_window, volume_index,
+                                             int_voxel[X],
+                                             int_voxel[Y],
+                                             int_voxel[Z] );
+
+        /* desired_label = get_current_paint_label( slice_window ); */
+		desired_label = 0;
+
+        print( "Clear 3d from %d %d %d, label %d becomes %d\n",
+               int_voxel[X], int_voxel[Y], int_voxel[Z],
+               label_under_mouse, desired_label );
+
+        (void) fill_connected_voxels( get_nth_volume(slice_window,volume_index),
+                               get_nth_label_volume(slice_window,volume_index),
+                               slice_window->slice.segmenting.connectivity,
+                               int_voxel,
+                               label_under_mouse, label_under_mouse,
+                               desired_label,
+                               slice_window->slice.segmenting.min_threshold,
+                               slice_window->slice.segmenting.max_threshold,
+                               range_changed );
+
+        delete_slice_undo( &slice_window->slice.undo, volume_index );
+
+        print( "Done\n" );
+
+        set_slice_window_all_update( slice_window, volume_index, UPDATE_LABELS);
+
+        tell_surface_extraction_range_of_labels_changed( display,
+                                               volume_index, range_changed );
+    }
+
+    return( OK );
+}
+
+/* ARGSUSED */
+
+public  DEF_MENU_UPDATE(clear_label_connected_3d )
+{
+    return( get_n_volumes(display) > 0 );
+}
+
+/* ARGSUSED */

@@ -32,6 +32,9 @@ private  void   initialize_view_to_fit (display_struct  *display );
 private  void   initialize_cache ();
 private  void   parse_options (int argc, char *argv[],
 		display_struct *graphics);
+private void  visibility_3D_window(int state);
+private void  visibility_marker_window(int state);
+private void  visibility_menu_window(int state);
 
 /* The first directory is set using compiler flag -D */
 /*#define  HARD_CODED_DISPLAY_DIRECTORY1    "/usr/local/mni/lib"*/
@@ -62,6 +65,7 @@ public  Status  set_global_variable_value(
                                  display_globals, variable_name, new_value ) );
 }
 
+
 int  main(
     int     argc,
     char    *argv[] )
@@ -69,7 +73,7 @@ int  main(
     int              i, view;
     STRING           filename;
     display_struct   *graphics;
-    display_struct   *menu, *slice_window;
+    display_struct   *menu, *slice_window, *marker;
     STRING           globals_filename, runtime_directory;
     int              n_directories;
     STRING           *directories;
@@ -127,10 +131,12 @@ int  main(
         return( 1 );
     delete_string( title );
 
-	if( Hide_3D_window )
-		glutHideWindow();
-
 	G_set_transparency_state( graphics->window, Graphics_transparency_flag);
+	if( Hide_3D_window )
+	{
+		glutSetWindow(graphics->window->GS_window->WS_window.window_id);
+		glutVisibilityFunc(visibility_3D_window);
+	}
 
     title = concat_strings( PROJECT_NAME, ": Menu" );
     if( create_graphics_window( MENU_WINDOW, ON, &menu, title,
@@ -138,18 +144,40 @@ int  main(
                                 Initial_menu_window_height ) != OK )
         return( 1 );
     delete_string( title );
+	if( Hide_menu_window )
+	{
+		glutSetWindow(menu->window->GS_window->WS_window.window_id);
+		glutVisibilityFunc(visibility_menu_window);
+	}
 
-    if( Hide_menu_window )
-		glutHideWindow();
+    title = concat_strings( PROJECT_NAME, ": Marker" );
+    if( create_graphics_window( MARKER_WINDOW, ON, &marker, title,
+                                Initial_marker_window_width,
+                                Initial_marker_window_height ) != OK )
+    	return( 1 );
+
+    delete_string( title );
+    if( Hide_marker_window )
+    {
+		glutSetWindow(marker->window->GS_window->WS_window.window_id);
+		glutVisibilityFunc(visibility_marker_window);
+    }
 
 
     graphics->associated[THREE_D_WINDOW] = graphics;
     graphics->associated[MENU_WINDOW] = menu;
     graphics->associated[SLICE_WINDOW] = (display_struct *) 0;
+    graphics->associated[MARKER_WINDOW] = marker;
 
     menu->associated[THREE_D_WINDOW] = graphics;
     menu->associated[MENU_WINDOW] = menu;
     menu->associated[SLICE_WINDOW] = (display_struct *) 0;
+    menu->associated[MARKER_WINDOW] = marker;
+
+    marker->associated[THREE_D_WINDOW] = graphics;
+    marker->associated[MENU_WINDOW] = menu;
+    marker->associated[SLICE_WINDOW] = (display_struct *) 0;
+    marker->associated[MARKER_WINDOW] = marker;
 
     if( initialize_menu( menu, runtime_directory,
 			 getenv( "HOME" ),
@@ -157,6 +185,9 @@ int  main(
 			 HARD_CODED_DISPLAY_DIRECTORY2,
 			 MENU_FILENAME ) != OK )
 	return 1;
+
+    if( initialize_marker_window( marker ) != OK )
+    return 1;
 
     delete_string( runtime_directory );
 
@@ -171,13 +202,15 @@ int  main(
 
     initialize_cache( graphics );
     initialize_view_to_fit( graphics );
-    rebuild_selected_list( graphics, menu );
+
+    rebuild_selected_list( graphics, marker );
     reset_view_parameters( graphics, &Default_line_of_sight,
                            &Default_horizontal );
 
     update_view( graphics );
     update_all_menu_text( graphics );
     set_update_required( graphics, NORMAL_PLANES );
+    set_update_required( marker, NORMAL_PLANES );
 
 	if( Hide_3D_window )
 		glutHideWindow();
@@ -375,15 +408,25 @@ private void parse_options(int argc, char *argv[], display_struct *graphics)
 				  "Interactively display and segment three dimensional images.\n"
 				  "\n");
 			print("  %-25s %s\n", "-version",
-					"output version information and exit.");
-			print("  %-25s %s\n", "-strict",
-					"exit on error when parsing arguments or loading file.");
+					"Output version information and exit.");
+			print("  %-25s %s\n", "-skiperror",
+					"Skip on error when parsing arguments or loading file.");
 			print("  %-25s %s\n", "-label FILENAME",
 					"Interpret FILENAME as a label to be displayed over other images.");
+			print("  %-25s %s\n", "-labeltags",
+					"Input tags from the label file.");
 			print("  %-25s %s\n", "-output-label FILENAME",
 					"Use FILENAME to save labels instead of prompting the user.");
 			print("  %-25s %s\n", "-ratio N1,N2",
 								"Display the images ratio of N1/N2. The first image index is 0.");
+			print("  %-25s %s\n", "-range MINIMUM MAXIMUM",
+					"Set the contrast range.");
+			print("  %-25s %s\n", "-gray",
+					"Use gray color map.");
+			print("  %-25s %s\n", "-hot",
+					"Use hot color map.");
+			print("  %-25s %s\n", "-spectral",
+					"Use spectral color map.");
 			print("  %-25s %s\n", "-global NAME VALUE",
 					"Set the global variable NAME to VALUE.");
 			print("\nReport bugs to minc-development@bic.mni.mcgill.ca\n");
@@ -394,11 +437,35 @@ private void parse_options(int argc, char *argv[], display_struct *graphics)
 			print("%s %s\n", PROJECT_NAME, PROJECT_VERSION );
 			exit(EX_OK);
 		}
-		else if (equal_strings(filename, "-strict"))
+		else if (equal_strings(filename, "-skiperror"))
 		{
-			if( set_global_variable_value("Exit_error_load_file", "TRUE") != OK )
+			if( set_global_variable_value("Exit_error_load_file", "FALSE") != OK )
 			{
-				print("Error setting strict variable from command line.\n");
+				print("Error setting skiperror variable from command line.\n");
+				retcode = ERROR;
+			}
+		}
+		else if (equal_strings(filename, "-gray"))
+		{
+			if( set_global_variable_value("Initial_colour_coding_type", "0") != OK )
+			{
+				print("Error setting gray variable from command line.\n");
+				retcode = ERROR;
+			}
+		}
+		else if (equal_strings(filename, "-hot"))
+		{
+			if( set_global_variable_value("Initial_colour_coding_type", "1") != OK )
+			{
+				print("Error setting hot variable from command line.\n");
+				retcode = ERROR;
+			}
+		}
+		else if (equal_strings(filename, "-spectral"))
+		{
+			if( set_global_variable_value("Initial_colour_coding_type", "13") != OK )
+			{
+				print("Error setting spectral variable from command line.\n");
 				retcode = ERROR;
 			}
 		}
@@ -425,6 +492,14 @@ private void parse_options(int argc, char *argv[], display_struct *graphics)
 			}
 			next_is_label_volume = TRUE;
 		}
+		else if (equal_strings(filename, "-labeltags"))
+		{
+			if( set_global_variable_value("Tags_from_label", "TRUE") != OK )
+			{
+				print("Error setting labeltags variable from command line.\n");
+				retcode = ERROR;
+			}
+		}
 		else if (equal_strings(filename, "-output-label"))
 		{
 			if (!get_string_argument("", &variable_value))
@@ -437,6 +512,33 @@ private void parse_options(int argc, char *argv[], display_struct *graphics)
 			{
 				print("Error setting output variable from command line.\n");
 				retcode = ERROR;
+			}
+		}
+		else if (equal_strings(filename, "-range"))
+		{
+			if (!get_string_argument("", &variable_name)
+					|| !get_string_argument("", &variable_value))
+			{
+				print_error("Error in arguments after -range.\n");
+				exit(EX_USAGE);
+			}
+
+			if (Initial_histogram_contrast)
+			{
+				if (set_global_variable_value("Initial_histogram_low", variable_name) != OK
+						|| set_global_variable_value("Initial_histogram_high", variable_value) != OK)
+				{
+					print("Error setting range variable from command line.\n");
+					retcode = ERROR;
+				}
+			}
+			else{
+				if (set_global_variable_value("Initial_low_absolute_position", variable_name) != OK
+						|| set_global_variable_value("Initial_high_absolute_position", variable_value) != OK)
+				{
+					print("Error setting range variable from command line.\n");
+					retcode = ERROR;
+				}
 			}
 		}
 		else if (equal_strings(filename, "-global"))
@@ -485,3 +587,29 @@ private void parse_options(int argc, char *argv[], display_struct *graphics)
 		exit(EX_USAGE);
 }
 
+void visibility_marker_window(int state)
+{
+	if (Hide_marker_window)
+	{
+		if (state == GLUT_VISIBLE)
+			glutHideWindow();
+	}
+}
+
+void visibility_3D_window(int state)
+{
+	if (Hide_3D_window)
+	{
+		if (state == GLUT_VISIBLE)
+			glutHideWindow();
+	}
+}
+
+void visibility_menu_window(int state)
+{
+	if (Hide_menu_window)
+	{
+		if (state == GLUT_VISIBLE)
+			glutHideWindow();
+	}
+}

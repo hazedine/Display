@@ -23,6 +23,7 @@ static char display_main_rcsid[] = "$Header: /private-cvsroot/visualization/Disp
 #include  <menu.h>
 #include  <slice.h>
 #include  <surface_extract.h>
+#include  <stack.h>
 
 /* for graphics windows */
 
@@ -52,6 +53,7 @@ static char display_main_rcsid[] = "$Header: /private-cvsroot/visualization/Disp
 typedef  enum  { THREE_D_WINDOW,
                  MENU_WINDOW,
                  SLICE_WINDOW,
+                 MARKER_WINDOW,
                  N_WINDOW_TYPES }
                window_types;
 
@@ -89,12 +91,14 @@ typedef  struct  display_struct
     three_d_window_struct      three_d;    /* should be a union of three */
     menu_window_struct         menu;
     slice_window_struct        slice;
+    menu_window_struct         marker;
 
     Gwindow                    window;
     Point                      prev_mouse_position;
     action_table_struct        action_table;
     int                        models_changed_id;
     object_struct              *models[N_MODELS];
+    struct stack_list 		   **label_stack;
 
 
     int                        frame_number;
